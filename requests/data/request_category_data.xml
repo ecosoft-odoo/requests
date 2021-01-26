@@ -1,13 +1,20 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <data noupdate="1">
         <record id="base.user_admin" model="res.users">
-            <field eval="[(4, ref('requests.group_request_manager'))]" name="groups_id"/>
+            <field
+                eval="[(4, ref('requests.group_request_manager'))]"
+                name="groups_id"
+            />
         </record>
 
         <record id="request_category_data_business_trip" model="request.category">
             <field name="name">Business Trip</field>
-            <field name="image" type="base64" file="requests/static/src/img/plane-departure-solid.svg"/>
+            <field
+                name="image"
+                type="base64"
+                file="requests/static/src/img/plane-departure-solid.svg"
+            />
             <field name="sequence">1</field>
             <field name="has_date">no</field>
             <field name="has_period">required</field>
@@ -24,7 +31,11 @@
         </record>
         <record id="request_category_data_borrow_items" model="request.category">
             <field name="name">Borrow Items</field>
-            <field name="image" type="base64" file="requests/static/src/img/hand-holding-solid.svg"/>
+            <field
+                name="image"
+                type="base64"
+                file="requests/static/src/img/hand-holding-solid.svg"
+            />
             <field name="sequence">10</field>
             <field name="has_date">no</field>
             <field name="has_period">required</field>
@@ -41,7 +52,11 @@
         </record>
         <record id="request_category_data_general_request" model="request.category">
             <field name="name">General Request</field>
-            <field name="image" type="base64" file="requests/static/src/img/clipboard-check-solid.svg"/>
+            <field
+                name="image"
+                type="base64"
+                file="requests/static/src/img/clipboard-check-solid.svg"
+            />
             <field name="sequence">20</field>
             <field name="has_date">optional</field>
             <field name="has_period">optional</field>
@@ -58,7 +73,11 @@
         </record>
         <record id="request_category_data_contract_request" model="request.category">
             <field name="name">Contract Request</field>
-            <field name="image" type="base64" file="requests/static/src/img/file-signature-solid.svg"/>
+            <field
+                name="image"
+                type="base64"
+                file="requests/static/src/img/file-signature-solid.svg"
+            />
             <field name="sequence">30</field>
             <field name="has_date">no</field>
             <field name="has_period">no</field>
@@ -75,7 +94,11 @@
         </record>
         <record id="request_category_data_payment_application" model="request.category">
             <field name="name">Payment Application</field>
-            <field name="image" type="base64" file="requests/static/src/img/credit-card-solid.svg"/>
+            <field
+                name="image"
+                type="base64"
+                file="requests/static/src/img/credit-card-solid.svg"
+            />
             <field name="sequence">40</field>
             <field name="has_date">required</field>
             <field name="has_period">no</field>
@@ -90,9 +113,16 @@
             <field name="request_minimum">1</field>
             <field name="is_manager_approver">False</field>
         </record>
-        <record id="request_category_data_car_rental_application" model="request.category">
+        <record
+            id="request_category_data_car_rental_application"
+            model="request.category"
+        >
             <field name="name">Car Rental Application</field>
-            <field name="image" type="base64" file="requests/static/src/img/car-solid.svg"/>
+            <field
+                name="image"
+                type="base64"
+                file="requests/static/src/img/car-solid.svg"
+            />
             <field name="sequence">50</field>
             <field name="has_date">no</field>
             <field name="has_period">required</field>
@@ -109,7 +139,11 @@
         </record>
         <record id="request_category_data_job_referral_award" model="request.category">
             <field name="name">Job Referral Award</field>
-            <field name="image" type="base64" file="requests/static/src/img/award-solid.svg"/>
+            <field
+                name="image"
+                type="base64"
+                file="requests/static/src/img/award-solid.svg"
+            />
             <field name="sequence">60</field>
             <field name="has_date">no</field>
             <field name="has_period">no</field>
@@ -126,7 +160,11 @@
         </record>
         <record id="request_category_data_procurement" model="request.category">
             <field name="name">Procurement</field>
-            <field name="image" type="base64" file="requests/static/src/img/shopping-cart-solid.svg"/>
+            <field
+                name="image"
+                type="base64"
+                file="requests/static/src/img/shopping-cart-solid.svg"
+            />
             <field name="sequence">70</field>
             <field name="has_date">no</field>
             <field name="has_period">no</field>

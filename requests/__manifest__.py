@@ -1,22 +1,12 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 {
     "name": "Requests",
-    "version": "1.0",
+    "version": "14.0.1.0.0",
+    "author": "Ecosoft, Odoo Community Association (OCA)",
     "category": "Human Resources/Requests",
-    "sequence": 190,
-    "summary": "Create and validate requests requests",
-    "description": """
-This module manages requests workflow
-======================================
-
-This module manages request requests like business trips,
-out of office, overtime, borrow items, general requests,
-procurements, contract request, etc.
-
-According to the request type configuration, a request
-creates next activities for the related approvers.
-    """,
+    "website": "https://github.com/OCA/account-payment",
+    "license": "AGPL-3",
+    "summary": "Create and validate requests",
     "depends": ["mail", "hr", "product"],
     "data": [
         "security/request_security.xml",

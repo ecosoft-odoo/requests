@@ -1,7 +1,6 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import api, fields, models, _
+from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
 
@@ -15,13 +14,20 @@ class RequestRequest(models.Model):
 
     @api.model
     def _read_group_request_status(self, stages, domain, order):
-        request_status_list = dict(self._fields["request_status"].selection).keys()
+        request_status_list = dict(
+            self._fields["request_status"].selection
+        ).keys()
         return request_status_list
 
     name = fields.Char(string="Request Subject", tracking=True)
-    category_id = fields.Many2one("request.category", string="Category", required=True)
+    category_id = fields.Many2one(
+        "request.category", string="Category", required=True
+    )
     approver_ids = fields.One2many(
-        "request.approver", "request_id", string="Approvers", check_company=True
+        "request.approver",
+        "request_id",
+        string="Approvers",
+        check_company=True,
     )
     company_id = fields.Many2one(
         string="Company",
@@ -36,7 +42,9 @@ class RequestRequest(models.Model):
     quantity = fields.Float(string="Quantity")
     location = fields.Char(string="Location")
     date_confirmed = fields.Datetime(string="Date Confirmed")
-    partner_id = fields.Many2one("res.partner", string="Contact", check_company=True)
+    partner_id = fields.Many2one(
+        "res.partner", string="Contact", check_company=True
+    )
     reference = fields.Char(string="Reference")
     amount = fields.Float(string="Amount")
     reason = fields.Text(string="Description")
@@ -71,7 +79,8 @@ class RequestRequest(models.Model):
         compute="_compute_user_status",
     )
     has_access_to_request = fields.Boolean(
-        string="Has Access To Request", compute="_compute_has_access_to_request"
+        string="Has Access To Request",
+        compute="_compute_has_access_to_request",
     )
     attachment_number = fields.Integer(
         "Number of Attachments", compute="_compute_attachment_number"
@@ -86,36 +95,51 @@ class RequestRequest(models.Model):
     has_amount = fields.Selection(related="category_id.has_amount")
     has_reference = fields.Selection(related="category_id.has_reference")
     has_partner = fields.Selection(related="category_id.has_partner")
-    has_payment_method = fields.Selection(related="category_id.has_payment_method")
+    has_payment_method = fields.Selection(
+        related="category_id.has_payment_method"
+    )
     has_location = fields.Selection(related="category_id.has_location")
     has_product = fields.Selection(related="category_id.has_product")
-    requirer_document = fields.Selection(related="category_id.requirer_document")
+    requirer_document = fields.Selection(
+        related="category_id.requirer_document"
+    )
     request_minimum = fields.Integer(related="category_id.request_minimum")
     request_type = fields.Selection(related="category_id.request_type")
-    is_manager_approver = fields.Boolean(related="category_id.is_manager_approver")
-    automated_sequence = fields.Boolean(related="category_id.automated_sequence")
+    is_manager_approver = fields.Boolean(
+        related="category_id.is_manager_approver"
+    )
+    automated_sequence = fields.Boolean(
+        related="category_id.automated_sequence"
+    )
 
     def _compute_has_access_to_request(self):
-        is_request_user = self.env.user.has_group("requests.group_request_user")
+        is_request_user = self.env.user.has_group(
+            "requests.group_request_user"
+        )
         for request in self:
             request.has_access_to_request = (
                 request.request_owner_id == self.env.user and is_request_user
             )
 
     def _compute_attachment_number(self):
-        domain = [("res_model", "=", "request.request"), ("res_id", "in", self.ids)]
+        domain = [
+            ("res_model", "=", "request.request"),
+            ("res_id", "in", self.ids),
+        ]
         attachment_data = self.env["ir.attachment"].read_group(
             domain, ["res_id"], ["res_id"]
         )
-        attachment = dict(
-            (data["res_id"], data["res_id_count"]) for data in attachment_data
-        )
+        attachment = {
+            data["res_id"]: data["res_id_count"] for data in attachment_data
+        }
         for request in self:
             request.attachment_number = attachment.get(request.id, 0)
 
     def action_get_attachment_view(self):
         self.ensure_one()
-        res = self.env["ir.actions.act_window"]._for_xml_id("base.action_attachment")
+        res = self.env["ir.actions.act_window"]._for_xml_id(
+            "base.action_attachment"
+        )
         res["domain"] = [
             ("res_model", "=", "request.request"),
             ("res_id", "in", self.ids),
@@ -163,7 +187,9 @@ class RequestRequest(models.Model):
                 lambda approver: approver.user_id == self.env.user
             )
         approver.write({"status": "approved"})
-        self.sudo()._get_user_request_activities(user=self.env.user).action_feedback()
+        self.sudo()._get_user_request_activities(
+            user=self.env.user
+        ).action_feedback()
 
     def action_refuse(self, approver=None):
         if not isinstance(approver, models.BaseModel):
@@ -171,7 +197,9 @@ class RequestRequest(models.Model):
                 lambda approver: approver.user_id == self.env.user
             )
         approver.write({"status": "refused"})
-        self.sudo()._get_user_request_activities(user=self.env.user).action_feedback()
+        self.sudo()._get_user_request_activities(
+            user=self.env.user
+        ).action_feedback()
 
     def action_withdraw(self, approver=None):
         if not isinstance(approver, models.BaseModel):
@@ -263,7 +291,10 @@ class RequestApprover(models.Model):
         readonly=True,
     )
     request_id = fields.Many2one(
-        "request.request", string="Request", ondelete="cascade", check_company=True
+        "request.request",
+        string="Request",
+        ondelete="cascade",
+        check_company=True,
     )
     company_id = fields.Many2one(
         string="Company",
@@ -282,10 +313,13 @@ class RequestApprover(models.Model):
     def _create_activity(self):
         for approver in self:
             approver.request_id.activity_schedule(
-                "requests.mail_activity_data_request", user_id=approver.user_id.id
+                "requests.mail_activity_data_request",
+                user_id=approver.user_id.id,
             )
 
-    @api.depends("request_id.request_owner_id", "request_id.approver_ids.user_id")
+    @api.depends(
+        "request_id.request_owner_id", "request_id.approver_ids.user_id"
+    )
     def _compute_existing_request_user_ids(self):
         for approver in self:
             approver.existing_request_user_ids = (

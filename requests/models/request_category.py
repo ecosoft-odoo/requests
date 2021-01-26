@@ -1,11 +1,9 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 import base64
 
-from odoo import api, fields, models, tools, _
+from odoo import _, api, fields, models
 from odoo.modules.module import get_module_resource
-
 
 CATEGORY_SELECTION = [
     ("required", "Required"),
@@ -87,7 +85,8 @@ class RequestCategory(models.Model):
     request_type = fields.Selection(
         string="Request Type",
         selection=[],
-        help="Allows you to define which documents you would like to create once the request has been approved",
+        help="Allows you to define which documents you would like to "
+        "create once the request has been approved",
     )
     is_manager_approver = fields.Boolean(
         string="Employee's Manager",
@@ -100,11 +99,13 @@ class RequestCategory(models.Model):
         domain="[('company_ids', 'in', company_id)]",
     )
     request_to_validate_count = fields.Integer(
-        "Number of requests to validate", compute="_compute_request_to_validate_count"
+        "Number of requests to validate",
+        compute="_compute_request_to_validate_count",
     )
     automated_sequence = fields.Boolean(
         "Automated Sequence?",
-        help="If checked, the Request Requests will have an automated generated name based on the given code.",
+        help="If checked, the Request Requests will have an automated "
+        "generated name based on the given code.",
     )
     sequence_code = fields.Char(string="Code")
     sequence_id = fields.Many2one(
@@ -119,10 +120,10 @@ class RequestCategory(models.Model):
         requests_data = self.env["request.request"].read_group(
             domain, ["category_id"], ["category_id"]
         )
-        requests_mapped_data = dict(
-            (data["category_id"][0], data["category_id_count"])
+        requests_mapped_data = {
+            data["category_id"][0]: data["category_id_count"]
             for data in requests_data
-        )
+        }
         for category in self:
             category.request_to_validate_count = requests_mapped_data.get(
                 category.id, 0
@@ -163,7 +164,9 @@ class RequestCategory(models.Model):
         if "company_id" in vals:
             for request_category in self:
                 if request_category.sequence_id:
-                    request_category.sequence_id.company_id = vals.get("company_id")
+                    request_category.sequence_id.company_id = vals.get(
+                        "company_id"
+                    )
         return super().write(vals)
 
     def create_request(self):

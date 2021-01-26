@@ -1,20 +1,29 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <odoo>
     <record id="request_product_line_view_tree" model="ir.ui.view">
         <field name="name">request.product.line.view.tree</field>
         <field name="model">request.product.line</field>
         <field name="arch" type="xml">
             <tree editable="bottom" string="Products">
-                <field name="company_id" invisible="1"/>
-                <field name="product_id" attrs="{'required': [('parent.has_product', '=', 'required')]}"/>
-                <field name="description"/>
-                <field name="quantity" attrs="{
+                <field name="company_id" invisible="1" />
+                <field
+                    name="product_id"
+                    attrs="{'required': [('parent.has_product', '=', 'required')]}"
+                />
+                <field name="description" />
+                <field
+                    name="quantity"
+                    attrs="{
                     'column_invisible': [('parent.has_quantity', '=', 'no')],
                     'required': [('parent.has_quantity', '=', 'required'), ('parent.request_status', '!=', 'new')],
-                    }"/>
-                <field name="product_uom_id" groups="uom.group_uom"
-                    options="{'no_create': True, 'no_open': True}"/>
-                <field name="product_uom_category_id" invisible="1"/>
+                    }"
+                />
+                <field
+                    name="product_uom_id"
+                    groups="uom.group_uom"
+                    options="{'no_create': True, 'no_open': True}"
+                />
+                <field name="product_uom_category_id" invisible="1" />
             </tree>
         </field>
     </record>
@@ -26,12 +35,12 @@
             <form string="Products">
                 <sheet>
                     <group>
-                        <field name="company_id" invisible="1"/>
-                        <field name="product_id"/>
-                        <field name="description"/>
-                        <field name="quantity"/>
-                        <field name="product_uom_id" groups="uom.group_uom"/>
-                        <field name="product_uom_category_id" invisible="1"/>
+                        <field name="company_id" invisible="1" />
+                        <field name="product_id" />
+                        <field name="description" />
+                        <field name="quantity" />
+                        <field name="product_uom_id" groups="uom.group_uom" />
+                        <field name="product_uom_category_id" invisible="1" />
                     </group>
                 </sheet>
             </form>

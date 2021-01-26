@@ -1,8 +1,6 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import api, fields, models, _
-from odoo.exceptions import UserError
+from odoo import api, fields, models
 
 
 class RequestProductLine(models.Model):
@@ -28,7 +26,9 @@ class RequestProductLine(models.Model):
         string="Unit of Measure",
         domain="[('category_id', '=', product_uom_category_id)]",
     )
-    product_uom_category_id = fields.Many2one(related="product_id.uom_id.category_id")
+    product_uom_category_id = fields.Many2one(
+        related="product_id.uom_id.category_id"
+    )
     quantity = fields.Float("Quantity", default=1.0)
 
     @api.onchange("product_id")

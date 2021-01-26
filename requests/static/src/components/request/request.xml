@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <templates xml:space="preserve">
 
     <t t-name="requests.Request" owl="1">
@@ -6,16 +6,22 @@
             <t t-if="request">
                 <t t-if="request.status === 'pending'">
                     <t t-if="request.isCurrentPartnerApprover">
-                        <button class="o_Request_toolButton o_Request_approveButton btn btn-success btn-link" t-on-click="_onClickApprove">
-                            <i class="fa fa-check"/> Approve
+                        <button
+                            class="o_Request_toolButton o_Request_approveButton btn btn-success btn-link"
+                            t-on-click="_onClickApprove"
+                        >
+                            <i class="fa fa-check" /> Approve
                         </button>
-                        <button class="o_Request_toolButton o_Request_refuseButton btn btn-danger btn-link" t-on-click="_onClickRefuse">
-                            <i class="fa fa-times"/> Refuse
+                        <button
+                            class="o_Request_toolButton o_Request_refuseButton btn btn-danger btn-link"
+                            t-on-click="_onClickRefuse"
+                        >
+                            <i class="fa fa-times" /> Refuse
                         </button>
                     </t>
                     <t t-else="">
                         <span class="o_Request_toApproveText text-warning">
-                            <i class="fa fa-pencil"/> To Approve
+                            <i class="fa fa-pencil" /> To Approve
                         </span>
                     </t>
                 </t>

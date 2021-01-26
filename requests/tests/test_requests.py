@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import fields
-from odoo.tests import common
 from odoo.exceptions import UserError
+from odoo.tests import common
 
 
 class TestRequest(common.TransactionCase):

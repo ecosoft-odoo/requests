@@ -1,7 +1,6 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import fields, models
+from odoo import models
 
 
 class MailActivity(models.Model):
@@ -17,9 +16,12 @@ class MailActivity(models.Model):
                 activity["activity_type_id"][0] == activity_type_request_id
                 and activity["res_model"] == "request.request"
             ):
-                request = self.env["request.request"].browse(activity["res_id"])
+                request = self.env["request.request"].browse(
+                    activity["res_id"]
+                )
                 approver = request.approver_ids.filtered(
-                    lambda approver: activity["user_id"][0] == approver.user_id.id
+                    lambda approver: activity["user_id"][0]
+                    == approver.user_id.id
                 )
                 activity["approver_id"] = approver.id
                 activity["approver_status"] = approver.status
