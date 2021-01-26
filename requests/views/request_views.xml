@@ -138,7 +138,6 @@
                     <field name="has_product" invisible="1" />
                     <field name="requirer_document" invisible="1" />
                     <field name="request_minimum" invisible="1" />
-                    <field name="request_type" invisible="1" />
                     <field name="is_manager_approver" invisible="1" />
                     <div class="o_not_full oe_button_box">
                         <button

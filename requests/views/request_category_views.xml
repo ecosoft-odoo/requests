@@ -12,10 +12,7 @@
         <field name="view_mode">tree,form</field>
     </record>
 
-    <record
-        id="request_request_action_to_review_category"
-        model="ir.actions.act_window"
-    >
+    <record id="request_action_to_review_category" model="ir.actions.act_window">
         <field name="name">Requests to review</field>
         <field name="res_model">request.request</field>
         <field name="view_mode">tree,form,kanban</field>
@@ -83,21 +80,25 @@
                         </h1>
                     </div>
                     <group>
-                        <field name="description" />
-                        <field name="request_type" invisible="1" />
-                        <field name="automated_sequence" />
-                        <field
-                            name="sequence_code"
-                            attrs="{
-                            'invisible': [('automated_sequence', '=', False)],
-                            'required': [('automated_sequence', '=', True)],
-                        }"
-                        />
-                        <field
-                            name="company_id"
-                            options="{'no_create': True}"
-                            groups="base.group_multi_company"
-                        />
+                        <group>
+                            <field name="description" />
+                            <field name="automated_sequence" />
+                            <field
+                                name="sequence_code"
+                                attrs="{
+                                'invisible': [('automated_sequence', '=', False)],
+                                'required': [('automated_sequence', '=', True)],
+                            }"
+                            />
+                            <field
+                                name="company_id"
+                                options="{'no_create': True}"
+                                groups="base.group_multi_company"
+                            />
+                        </group>
+                        <group>
+                            <field name="server_action_ids" widget="many2many_tags" />
+                        </group>
                     </group>
                     <notebook>
                         <page string="Options" name="options">
@@ -221,7 +222,7 @@
                                     <button
                                         type="action"
                                         class="btn btn-sm btn-secondary float-right"
-                                        name="%(requests.request_request_action_to_review_category)d"
+                                        name="%(requests.request_action_to_review_category)d"
                                         groups="requests.group_request_user"
                                     >To Review: <field
                                             name="request_to_validate_count"

@@ -16,7 +16,7 @@
         "views/request_template.xml",
         "views/request_category_views.xml",
         "views/request_product_line_views.xml",
-        "views/request_request_views.xml",
+        "views/request_views.xml",
         "views/res_users_views.xml",
     ],
     "demo": [

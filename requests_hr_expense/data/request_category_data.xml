@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <data noupdate="1">
+        <record id="request_category_data_hr_expense" model="request.category">
+            <field name="name">Create Expense's</field>
+            <field
+                name="server_action_ids"
+                eval="[(4, ref('requests_hr_expense.server_action_create_hr_expense'))]"
+            />
+            <field
+                name="image"
+                type="base64"
+                file="requests_purchase_request/static/src/img/shopping-cart-po-solid.svg"
+            />
+            <field name="sequence">100</field>
+            <field name="has_product">required</field>
+            <field name="has_quantity">required</field>
+            <field name="automated_sequence" eval="True" />
+            <field name="sequence_code">APPR</field>
+        </record>
+    </data>
+</odoo>

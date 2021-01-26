@@ -82,12 +82,6 @@ class RequestCategory(models.Model):
     request_minimum = fields.Integer(
         string="Minimum Request", default="1", required=True
     )
-    request_type = fields.Selection(
-        string="Request Type",
-        selection=[],
-        help="Allows you to define which documents you would like to "
-        "create once the request has been approved",
-    )
     is_manager_approver = fields.Boolean(
         string="Employee's Manager",
         help="Automatically add the manager as approver on the request.",
@@ -110,6 +104,13 @@ class RequestCategory(models.Model):
     sequence_code = fields.Char(string="Code")
     sequence_id = fields.Many2one(
         "ir.sequence", "Reference Sequence", copy=False, check_company=True
+    )
+    # kittiu
+    server_action_ids = fields.Many2many(
+        comodel_name="ir.actions.server",
+        string="Post Approved Action",
+        domain=[("usage", "=", "ir_actions_server")],
+        help="Server action that can get executed after the request is approved",
     )
 
     def _compute_request_to_validate_count(self):
