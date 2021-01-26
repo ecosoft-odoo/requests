@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="assets_backend" name="requests assets" inherit_id="web.assets_backend">
+        <xpath expr="." position="inside">
+            <script type="text/javascript" src="/requests/static/src/js/activity.js"/>
+            <script type="text/javascript" src="/requests/static/src/bugfix/bugfix.js"/>
+            <script type="text/javascript" src="/requests/static/src/components/activity/activity.js"/>
+            <script type="text/javascript" src="/requests/static/src/components/request/request.js"/>
+            <script type="text/javascript" src="/requests/static/src/models/activity/activity.js"/>
+            <script type="text/javascript" src="/requests/static/src/models/request/request.js"/>
+            <script type="text/javascript" src="/requests/static/src/widgets/form_renderer/form_renderer.js"/>
+
+            <link rel="stylesheet" type="text/scss" href="/requests/static/src/bugfix/bugfix.scss"/>
+            <link rel="stylesheet" type="text/scss" href="/requests/static/src/components/request/request.scss"/>
+        </xpath>
+    </template>
+
+    <template id="assets_tests" name="Requests Assets Tests" inherit_id="web.assets_tests">
+        <xpath expr="." position="inside">
+            <script type="text/javascript" src="/requests/static/tests/tours/requests.js"/>
+        </xpath>
+    </template>
+
+    <template id="tests_assets" name="Requests Tests Assets" inherit_id="web.tests_assets">
+        <xpath expr="." position="inside">
+            <script type="text/javascript" src="/requests/static/tests/helpers/mock_server.js"/>
+        </xpath>
+    </template>
+
+    <template id="qunit_suite" name="requests_tests" inherit_id="web.qunit_suite_tests">
+        <xpath expr="." position="inside">
+            <script type="text/javascript" src="/requests/static/src/bugfix/bugfix_tests.js"/>
+            <script type="text/javascript" src="/requests/static/src/components/activity/activity_tests.js"/>
+        </xpath>
+    </template>
+
+</odoo>
