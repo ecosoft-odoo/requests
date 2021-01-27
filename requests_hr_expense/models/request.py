@@ -22,18 +22,6 @@ class RequestRequest(models.Model):
                     sheets |= line.resource_ref.sheet_id
             request.hr_expense_count = len(sheets)
 
-    def action_confirm(self):
-        # Validation Logic
-        for request in self:
-            if (
-                "hr.expense.sheet" in request.server_action_ids.model_id.model
-                and not request.product_line_ids._filter_hr_expense_line()
-            ):
-                raise UserError(
-                    _("You cannot create an empty expense report.")
-                )
-        return super().action_confirm()
-
     def _prepare_hr_expense_sheet(self):
         self.ensure_one()
         val = {
@@ -59,7 +47,8 @@ class RequestRequest(models.Model):
         self.ensure_one()
         val = self._prepare_hr_expense_sheet()
         new = self.env["hr.expense.sheet"].create(val)
-        for line in self.product_line_ids._filter_hr_expense_line():
+        lines = self.product_line_ids._filter_hr_expense_line()
+        for line in lines:
             line_val = self._prepare_hr_expense_line(line, new)
             new_line = self.env["hr.expense"].create(line_val)
             line.resource_ref = "{},{}".format(

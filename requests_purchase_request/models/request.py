@@ -24,18 +24,6 @@ class RequestRequest(models.Model):
                     purchase_requests |= line.resource_ref.request_id
             request.purchase_request_count = len(purchase_requests)
 
-    def action_confirm(self):
-        # Validation Logic
-        for request in self:
-            if (
-                "purchase.request" in request.server_action_ids.model_id.model
-                and not request.product_line_ids._filter_purchase_request_line()
-            ):
-                raise UserError(
-                    _("You cannot create an empty purchase request.")
-                )
-        return super().action_confirm()
-
     def _prepare_purchase_request(self):
         self.ensure_one()
         val = {
@@ -63,7 +51,8 @@ class RequestRequest(models.Model):
         self.ensure_one()
         val = self._prepare_purchase_request()
         new = self.env["purchase.request"].create(val)
-        for line in self.product_line_ids:
+        lines = self.product_line_ids._filter_purchase_request_line()
+        for line in lines:
             line_val = self._prepare_purchase_request_line(line, new)
             new_line = self.env["purchase.request.line"].create(line_val)
             line.resource_ref = "{},{}".format(

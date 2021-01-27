@@ -1,6 +1,6 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 {
-    "name": "Requests -> Employee Report",
+    "name": "Requests -> All Spending (PR/EX/AV)",
     "version": "14.0.1.0.0",
     "category": "Human Resources/Requests",
     "website": "https://github.com/ecosoft-odoo/requests",
@@ -10,11 +10,13 @@
     """,
     "author": "Ecosoft, Odoo Community Association (OCA)",
     "license": "AGPL-3",
-    "depends": ["requests", "hr_expense"],
+    "depends": [
+        "requests_purchase_request",
+        "requests_hr_expense",
+    ],
     "data": [
-        "data/ir_actions_server.xml",
         "data/request_category_data.xml",
-        "views/request_views.xml",
+        "views/request_product_line_views.xml",
     ],
     "demo": [
         "data/request_demo.xml",
