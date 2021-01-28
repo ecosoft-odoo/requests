@@ -1,5 +1,4 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
-
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
@@ -86,7 +85,7 @@ class RequestRequest(models.Model):
         "Number of Attachments", compute="_compute_attachment_number"
     )
     product_line_ids = fields.One2many(
-        "request.product.line", "request_request_id", check_company=True
+        "request.product.line", "request_id", check_company=True
     )
 
     has_date = fields.Selection(related="category_id.has_date")
@@ -104,12 +103,23 @@ class RequestRequest(models.Model):
         related="category_id.requirer_document"
     )
     request_minimum = fields.Integer(related="category_id.request_minimum")
-    request_type = fields.Selection(related="category_id.request_type")
+    server_action_ids = fields.Many2many(
+        related="category_id.server_action_ids"
+    )
     is_manager_approver = fields.Boolean(
         related="category_id.is_manager_approver"
     )
     automated_sequence = fields.Boolean(
         related="category_id.automated_sequence"
+    )
+    resource_ref = fields.Reference(
+        string="Ref",
+        selection=lambda self: [
+            (model.model, model.name)
+            for model in self.env["ir.model"].search([])
+        ],
+        readonly=True,
+        help="Optional field for reference to document created by action",
     )
 
     def _compute_has_access_to_request(self):
@@ -190,6 +200,8 @@ class RequestRequest(models.Model):
         self.sudo()._get_user_request_activities(
             user=self.env.user
         ).action_feedback()
+        # Server Action
+        self.execute_server_action()
 
     def action_refuse(self, approver=None):
         if not isinstance(approver, models.BaseModel):
@@ -260,6 +272,12 @@ class RequestRequest(models.Model):
             self.approver_ids += self.env["request.approver"].new(
                 {"user_id": user.id, "request_id": self.id, "status": "new"}
             )
+
+    def execute_server_action(self):
+        for rec in self:
+            for server_action in rec.category_id.server_action_ids:
+                ctx = {"active_model": rec._name, "active_id": rec.id}
+                server_action.with_context(ctx).run()
 
 
 class RequestApprover(models.Model):

@@ -34,8 +34,8 @@
             />
         </record>
 
-        <record id="request_request_request_owner_rule" model="ir.rule">
-            <field name="name">Request request request owner rule</field>
+        <record id="request_owner_rule" model="ir.rule">
+            <field name="name">Request owner rule</field>
             <field name="model_id" ref="model_request_request" />
             <field name="groups" eval="[(4, ref('base.group_user'))]" />
             <field name="perm_read" eval="1" />
@@ -45,8 +45,8 @@
             <field name="domain_force">[('request_owner_id.id','=', user.id)]</field>
         </record>
 
-        <record id="request_request_unlink_request_owner_rule" model="ir.rule">
-            <field name="name">Request request unlink request owner rule</field>
+        <record id="request_unlink_request_owner_rule" model="ir.rule">
+            <field name="name">Request unlink owner rule</field>
             <field name="model_id" ref="model_request_request" />
             <field name="groups" eval="[(4, ref('base.group_user'))]" />
             <field name="perm_read" eval="0" />
@@ -58,8 +58,8 @@
             >[('request_owner_id.id', '=', user.id), ('request_status','=','cancel')]</field>
         </record>
 
-        <record id="request_request_approvers_rule" model="ir.rule">
-            <field name="name">Request request approvers rule</field>
+        <record id="request_approvers_rule" model="ir.rule">
+            <field name="name">Request approvers rule</field>
             <field name="model_id" ref="model_request_request" />
             <field name="groups" eval="[(4, ref('base.group_user'))]" />
             <field name="perm_read" eval="1" />
@@ -71,8 +71,8 @@
             >[('approver_ids.user_id.id','=', user.id)]</field>
         </record>
 
-        <record id="request_request_user" model="ir.rule">
-            <field name="name">Request request user</field>
+        <record id="request_user" model="ir.rule">
+            <field name="name">Request user</field>
             <field name="model_id" ref="model_request_request" />
             <field name="groups" eval="[(4, ref('group_request_user'))]" />
             <field name="perm_read" eval="1" />
@@ -82,8 +82,8 @@
             <field name="domain_force">[(1, '=', 1)]</field>
         </record>
 
-        <record id="request_request_user_unlink" model="ir.rule">
-            <field name="name">Request request user unlink</field>
+        <record id="request_user_unlink" model="ir.rule">
+            <field name="name">Request user unlink</field>
             <field name="model_id" ref="model_request_request" />
             <field name="groups" eval="[(4, ref('group_request_user'))]" />
             <field name="perm_read" eval="0" />
@@ -94,7 +94,7 @@
         </record>
 
         <!-- Multi-company rules -->
-        <record model="ir.rule" id="request_request_rule">
+        <record id="request_request_rule" model="ir.rule">
             <field name="name">request_request multi-company</field>
             <field
                 name="model_id"
@@ -103,7 +103,7 @@
             />
             <field name="domain_force">[('company_id', 'in', company_ids)]</field>
         </record>
-        <record model="ir.rule" id="request_category_rule">
+        <record id="request_category_rule" model="ir.rule">
             <field name="name">request_category multi-company</field>
             <field
                 name="model_id"
@@ -112,7 +112,7 @@
             />
             <field name="domain_force">[('company_id', 'in', company_ids)]</field>
         </record>
-        <record model="ir.rule" id="request_approver_rule">
+        <record id="request_approver_rule" model="ir.rule">
             <field name="name">request_approver multi-company</field>
             <field
                 name="model_id"
@@ -121,7 +121,7 @@
             />
             <field name="domain_force">[('company_id', 'in', company_ids)]</field>
         </record>
-        <record model="ir.rule" id="request_product_line_rule">
+        <record id="request_product_line_rule" model="ir.rule">
             <field name="name">request_product_line multi-company</field>
             <field
                 name="model_id"

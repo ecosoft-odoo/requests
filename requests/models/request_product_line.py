@@ -9,11 +9,11 @@ class RequestProductLine(models.Model):
 
     _check_company_auto = True
 
-    request_request_id = fields.Many2one("request.request", required=True)
+    request_id = fields.Many2one("request.request", required=True)
     description = fields.Char("Description", required=True)
     company_id = fields.Many2one(
         string="Company",
-        related="request_request_id.company_id",
+        related="request_id.company_id",
         store=True,
         readonly=True,
         index=True,
@@ -30,6 +30,14 @@ class RequestProductLine(models.Model):
         related="product_id.uom_id.category_id"
     )
     quantity = fields.Float("Quantity", default=1.0)
+    resource_ref = fields.Reference(
+        string="Line Ref",
+        selection=lambda self: [
+            (model.model, model.name)
+            for model in self.env["ir.model"].search([])
+        ],
+        readonly=True,
+    )
 
     @api.onchange("product_id")
     def _onchange_product_id(self):

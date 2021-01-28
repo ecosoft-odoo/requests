@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="request_product_line_view_tree" model="ir.ui.view">
+        <field name="name">request.product.line.view.tree</field>
+        <field name="model">request.product.line</field>
+        <field name="inherit_id" ref="requests.request_product_line_view_tree" />
+        <field name="arch" type="xml">
+            <field name="product_uom_category_id" position="after">
+                <field name="res_type" required="1" />
+            </field>
+        </field>
+    </record>
+</odoo>
