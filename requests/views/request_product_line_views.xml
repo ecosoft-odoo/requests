@@ -15,7 +15,7 @@
                     name="quantity"
                     attrs="{
                     'column_invisible': [('parent.has_quantity', '=', 'no')],
-                    'required': [('parent.has_quantity', '=', 'required'), ('parent.request_status', '!=', 'new')],
+                    'required': [('parent.has_quantity', '=', 'required'), ('parent.state', '!=', 'new')],
                     }"
                 />
                 <field

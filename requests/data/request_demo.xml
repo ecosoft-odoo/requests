@@ -7,7 +7,7 @@
 
         <record id="request_request_demo_business_trip" model="request.request">
             <field name="name">Business trip to London</field>
-            <field name="request_status">pending</field>
+            <field name="state">pending</field>
             <field name="location">London</field>
             <field name="category_id" ref="request_category_data_business_trip" />
             <field name="request_owner_id" ref="base.user_admin" />
@@ -28,7 +28,7 @@
 
         <record id="request_request_demo_borrow_items" model="request.request">
             <field name="name">Borrow the screwdriver</field>
-            <field name="request_status">pending</field>
+            <field name="state">pending</field>
             <field name="category_id" ref="request_category_data_borrow_items" />
             <field name="request_owner_id" ref="base.user_demo" />
             <field name="date_start" eval="time.strftime('%Y-05-01')" />

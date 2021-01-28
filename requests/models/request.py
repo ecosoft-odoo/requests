@@ -12,11 +12,9 @@ class RequestRequest(models.Model):
     _check_company_auto = True
 
     @api.model
-    def _read_group_request_status(self, stages, domain, order):
-        request_status_list = dict(
-            self._fields["request_status"].selection
-        ).keys()
-        return request_status_list
+    def _read_group_state(self, stages, domain, order):
+        state_list = dict(self._fields["state"].selection).keys()
+        return state_list
 
     name = fields.Char(string="Request Subject", tracking=True)
     category_id = fields.Many2one(
@@ -47,7 +45,7 @@ class RequestRequest(models.Model):
     reference = fields.Char(string="Reference")
     amount = fields.Float(string="Amount")
     reason = fields.Text(string="Description")
-    request_status = fields.Selection(
+    state = fields.Selection(
         [
             ("new", "To Submit"),
             ("pending", "Submitted"),
@@ -56,10 +54,10 @@ class RequestRequest(models.Model):
             ("cancel", "Cancel"),
         ],
         default="new",
-        compute="_compute_request_status",
+        compute="_compute_state",
         store=True,
         tracking=True,
-        group_expand="_read_group_request_status",
+        group_expand="_read_group_state",
     )
     request_owner_id = fields.Many2one(
         "res.users",
@@ -235,7 +233,7 @@ class RequestRequest(models.Model):
             ).status
 
     @api.depends("approver_ids.status")
-    def _compute_request_status(self):
+    def _compute_state(self):
         for request in self:
             status_lst = request.mapped("approver_ids.status")
             minimal_approver = (
@@ -256,7 +254,7 @@ class RequestRequest(models.Model):
                     status = "pending"
             else:
                 status = "new"
-            request.request_status = status
+            request.state = status
 
     @api.onchange("category_id", "request_owner_id")
     def _onchange_category_id(self):

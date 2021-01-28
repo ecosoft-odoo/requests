@@ -115,7 +115,7 @@ class RequestCategory(models.Model):
 
     def _compute_request_to_validate_count(self):
         domain = [
-            ("request_status", "=", "pending"),
+            ("state", "=", "pending"),
             ("approver_ids.user_id", "=", self.env.user.id),
         ]
         requests_data = self.env["request.request"].read_group(
@@ -187,6 +187,6 @@ class RequestCategory(models.Model):
                 "default_name": name,
                 "default_category_id": self.id,
                 "default_request_owner_id": self.env.user.id,
-                "default_request_status": "new",
+                "default_state": "new",
             },
         }

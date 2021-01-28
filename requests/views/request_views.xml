@@ -16,7 +16,7 @@
         <field name="view_mode">tree,form,kanban</field>
         <field
             name="domain"
-        >['&amp;',('approver_ids.user_id','=',uid),('request_status','=','pending')]</field>
+        >['&amp;',('approver_ids.user_id','=',uid),('state','=','pending')]</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 No new requests to review
@@ -39,7 +39,7 @@
                 <field name="name" />
                 <field name="request_owner_id" />
                 <field name="category_id" />
-                <field name="request_status" />
+                <field name="state" />
             </tree>
         </field>
     </record>
@@ -59,7 +59,7 @@
                 <filter
                     string="My Requests to Review"
                     name="filter_requests_to_review"
-                    domain="[('approver_ids.user_id', '=', uid), ('request_status', '=', 'pending')]"
+                    domain="[('approver_ids.user_id', '=', uid), ('state', '=', 'pending')]"
                 />
             </search>
         </field>
@@ -78,7 +78,7 @@
                         name="action_confirm"
                         string="Submit"
                         type="object"
-                        attrs="{'invisible':[('request_status','!=','new')]}"
+                        attrs="{'invisible':[('state','!=','new')]}"
                         class="btn-primary"
                     />
                     <button
@@ -97,19 +97,19 @@
                         name="action_withdraw"
                         string="Withdraw"
                         type="object"
-                        attrs="{'invisible':['|','|',('request_status','==','new'),('user_status','in',['pending','cancel']),('user_status','=',False)]}"
+                        attrs="{'invisible':['|','|',('state','==','new'),('user_status','in',['pending','cancel']),('user_status','=',False)]}"
                     />
                     <button
                         name="action_draft"
                         string="Back To Draft"
                         type="object"
-                        attrs="{'invisible':['|',('request_status','!=','cancel'),'&amp;',('user_status','==',False),('has_access_to_request','==',False)]}"
+                        attrs="{'invisible':['|',('state','!=','cancel'),'&amp;',('user_status','==',False),('has_access_to_request','==',False)]}"
                     />
                     <button
                         name="action_cancel"
                         string="Cancel"
                         type="object"
-                        attrs="{'invisible':['|',('request_status','in',['new','cancel']),'&amp;',('user_status','==',False),('has_access_to_request','==',False)]}"
+                        attrs="{'invisible':['|',('state','in',['new','cancel']),'&amp;',('user_status','==',False),('has_access_to_request','==',False)]}"
                     />
                     <widget
                         name="attach_document"
@@ -124,7 +124,7 @@
                         highlight="1"
                         attrs="{'invisible': [('attachment_number', '&gt;=', 1)]}"
                     />
-                    <field name="request_status" widget="statusbar" />
+                    <field name="state" widget="statusbar" />
                 </header>
                 <sheet>
                     <field name="has_date" invisible="1" />
@@ -173,12 +173,12 @@
                                 name="request_owner_id"
                                 groups="requests.group_request_user"
                                 domain="[('share', '=', False)]"
-                                attrs="{'readonly':[('request_status','not in',('new', 'pending'))]}"
+                                attrs="{'readonly':[('state','not in',('new', 'pending'))]}"
                             />
                             <field
                                 name="category_id"
                                 groups="requests.group_request_user"
-                                attrs="{'readonly':[('request_status','!=','new')]}"
+                                attrs="{'readonly':[('state','!=','new')]}"
                                 force_save="1"
                             />
                             <field
@@ -196,7 +196,7 @@
                                     <field
                                         name="date"
                                         class="oe_inline"
-                                        attrs="{'required': [('has_date','==','required')], 'readonly': [('request_status','not in',('new', 'pending'))]}"
+                                        attrs="{'required': [('has_date','==','required')], 'readonly': [('state','not in',('new', 'pending'))]}"
                                     />
                                 </div>
                             </div>
@@ -210,24 +210,24 @@
                                   <span>From: </span><field
                                         name="date_start"
                                         class="oe_inline"
-                                        attrs="{'required': [('has_period','==','required')], 'readonly': [('request_status','not in',('new', 'pending'))]}"
+                                        attrs="{'required': [('has_period','==','required')], 'readonly': [('state','not in',('new', 'pending'))]}"
                                     />
                                 </div>
                                 <div>
                                   <span>to: </span><field
                                         name="date_end"
                                         class="oe_inline"
-                                        attrs="{'required': [('has_period','==','required')], 'readonly': [('request_status','not in',('new', 'pending'))]}"
+                                        attrs="{'required': [('has_period','==','required')], 'readonly': [('state','not in',('new', 'pending'))]}"
                                     />
                                 </div>
                             </div>
                             <field
                                 name="location"
-                                attrs="{'invisible':[('has_location','==','no')], 'required': [('has_location','==','required')], 'readonly': [('request_status','not in',('new', 'pending'))]}"
+                                attrs="{'invisible':[('has_location','==','no')], 'required': [('has_location','==','required')], 'readonly': [('state','not in',('new', 'pending'))]}"
                             />
                             <field
                                 name="partner_id"
-                                attrs="{'invisible':[('has_partner','==','no')], 'required': [('has_partner','==','required')], 'readonly': [('request_status','not in',('new', 'pending'))]}"
+                                attrs="{'invisible':[('has_partner','==','no')], 'required': [('has_partner','==','required')], 'readonly': [('state','not in',('new', 'pending'))]}"
                             />
                         </group>
                         <group name="request_details">
@@ -236,12 +236,12 @@
                                 attrs="{
                                     'invisible':['|', ('has_quantity', '=', 'no'), ('has_product', '!=', 'no')],
                                     'required': [('has_quantity','=','required'), ('has_product', '=', 'no')],
-                                    'readonly':[('request_status','not in',('new', 'pending'))],
+                                    'readonly':[('state','not in',('new', 'pending'))],
                                 }"
                             />
                             <field
                                 name="amount"
-                                attrs="{'invisible':[('has_amount','==','no')], 'required': [('has_amount','==','required')], 'readonly':[('request_status','not in',('new', 'pending'))]}"
+                                attrs="{'invisible':[('has_amount','==','no')], 'required': [('has_amount','==','required')], 'readonly':[('state','not in',('new', 'pending'))]}"
                             />
                             <field
                                 name="reference"
@@ -259,13 +259,13 @@
                             <field
                                 name="product_line_ids"
                                 context="{'tree_view_ref': 'requests.request_product_line_view_tree'}"
-                                attrs="{'readonly':[('request_status','not in',('new', 'pending'))]}"
+                                attrs="{'readonly':[('state','not in',('new', 'pending'))]}"
                             />
                         </page>
                         <page string="Description" name="description">
                             <field
                                 name="reason"
-                                attrs="{'readonly':[('request_status','not in',('new', 'pending'))]}"
+                                attrs="{'readonly':[('state','not in',('new', 'pending'))]}"
                             />
                         </page>
                         <page string="Approver(s)" name="approvers">
@@ -345,7 +345,7 @@
             <kanban
                 create="false"
                 class="o_modules_kanban"
-                default_group_by="request_status"
+                default_group_by="state"
                 default_order="create_date desc"
                 group_create="false"
                 group_edit="false"
@@ -353,7 +353,7 @@
                 sample="1"
             >
                 <field name="request_owner_id" />
-                <field name="request_status" />
+                <field name="state" />
                 <field name="user_status" />
                 <field name="name" />
                 <field name="activity_ids" />
@@ -406,7 +406,7 @@
                                     <a
                                         name="action_withdraw"
                                         type="object"
-                                        attrs="{'invisible':['|',('request_status','==','new'),('user_status','in',['pending','cancel'])]}"
+                                        attrs="{'invisible':['|',('state','==','new'),('user_status','in',['pending','cancel'])]}"
                                         role="menuitem"
                                         class="dropdown-item"
                                     >Withdraw</a>
