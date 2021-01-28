@@ -20,6 +20,8 @@ class RequestRequest(models.Model):
 
     def action_create_hr_advance(self):
         self.ensure_one()
+        if not self.amount > 0:  # No amount, no create advance
+            return
         values = {
             "advance": True,
             "unit_amount": self.amount,

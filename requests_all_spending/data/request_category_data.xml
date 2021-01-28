@@ -6,6 +6,7 @@
             <field
                 name="server_action_ids"
                 eval="[(4, ref('requests_hr_expense.server_action_create_hr_expense')),
+                       (4, ref('requests_hr_advance.server_action_create_hr_advance')),
                        (4, ref('requests_purchase_request.server_action_create_purchase_request'))]"
             />
             <field
@@ -16,6 +17,7 @@
             <field name="sequence">100</field>
             <field name="has_product">required</field>
             <field name="has_quantity">required</field>
+            <field name="has_amount">required</field>
             <field name="automated_sequence" eval="True" />
             <field name="sequence_code">APPR</field>
         </record>

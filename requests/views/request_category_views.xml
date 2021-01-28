@@ -34,7 +34,7 @@
                     groups="base.group_multi_company"
                     optional="show"
                 />
-                <field name="active"/>
+                <field name="active" />
             </tree>
         </field>
     </record>
@@ -99,7 +99,7 @@
                             />
                         </group>
                         <group>
-                            <field name="active" readonly="1"/>
+                            <field name="active" readonly="1" />
                             <field name="server_action_ids" widget="many2many_tags" />
                         </group>
                     </group>

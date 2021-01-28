@@ -1,6 +1,6 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
-from odoo import models, fields
+from odoo import fields, models
 
 
 class RequestProductLine(models.Model):
@@ -9,7 +9,6 @@ class RequestProductLine(models.Model):
     res_type = fields.Selection(
         selection=[
             ("ex", "EX"),
-            ("av", "AV"),
             ("pr", "PR"),
         ],
         string="Type",

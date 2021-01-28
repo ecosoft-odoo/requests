@@ -13,6 +13,7 @@
     "depends": [
         "requests_purchase_request",
         "requests_hr_expense",
+        "requests_hr_advance",
     ],
     "data": [
         "data/request_category_data.xml",
