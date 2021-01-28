@@ -30,7 +30,6 @@ class RequestRequest(models.Model):
             "company_id": self.company_id.id,
             "requested_by": self.request_owner_id.id,
             "description": "DESCRIPTION",
-            "name": "/",
         }
         return val
 
@@ -48,7 +47,8 @@ class RequestRequest(models.Model):
 
     def action_create_purchase_request(self):
         self.ensure_one()
-        val = self._prepare_purchase_request()
+        val = self.env["purchase.request"].default_get(["name"])
+        val.update(self._prepare_purchase_request())
         new = self.env["purchase.request"].create(val)
         lines = self.product_line_ids._filter_purchase_request_line()
         for line in lines:

@@ -1,5 +1,5 @@
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
-
+# from odoo.tests.common import Form
 from odoo import _, api, fields, models
 
 
@@ -54,6 +54,18 @@ class RequestRequest(models.Model):
                 new_line._name,
                 new_line.id,
             )
+
+    # def action_create_hr_expense(self):
+    #     self.ensure_one()
+    #     ctx = {}
+    #     with Form(
+    #         self.env["hr.expense"].with_context(ctx),
+    #     view_id=) as leave_form:
+    #         leave_form.holiday_status_id = self.leave_type
+    #         leave_form.request_date_from = date(2019, 9, 2)
+    #         leave_form.request_date_to = date(2019, 9, 2)
+    #         leave_form.request_unit_half = True
+    #         leave_form.request_date_from_period = "am"
 
     def action_open_hr_expense(self):
         self.ensure_one()
