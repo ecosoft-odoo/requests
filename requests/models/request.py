@@ -5,7 +5,7 @@ from odoo.exceptions import UserError
 
 class RequestRequest(models.Model):
     _name = "request.request"
-    _description = "Request Request"
+    _description = "Request"
     _inherit = ["mail.thread", "mail.activity.mixin"]
     _order = "name"
 

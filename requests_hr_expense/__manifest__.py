@@ -6,7 +6,7 @@
     "website": "https://github.com/OCA/account-payment",
     "summary": """
         This module adds to the requests workflow the possibility to generate
-        Purchase Request from an Requests of Purchase Request.
+        Employee Expense Report from an Requests.
     """,
     "author": "Ecosoft, Odoo Community Association (OCA)",
     "license": "AGPL-3",
