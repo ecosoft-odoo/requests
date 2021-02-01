@@ -18,7 +18,6 @@ class RequestCategory(models.Model):
     _order = "sequence"
 
     _check_company_auto = True
-    _use_approver = True
 
     def _get_default_image(self):
         default_image_path = get_module_resource(
@@ -106,16 +105,13 @@ class RequestCategory(models.Model):
     sequence_id = fields.Many2one(
         "ir.sequence", "Reference Sequence", copy=False, check_company=True
     )
+    # kittiu
     server_action_ids = fields.Many2many(
         comodel_name="ir.actions.server",
         string="Post Approved Action",
         domain=[("usage", "=", "ir_actions_server")],
         help="Server action that can get executed after the request is approved",
     )
-    use_approver = fields.Boolean(compute="_compute_use_approver")
-
-    def _compute_use_approver(self):
-        self.update({"use_approver": self._use_approver})
 
     def _compute_request_to_validate_count(self):
         domain = [
