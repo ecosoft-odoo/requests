@@ -16,6 +16,11 @@ class RequestRequest(models.Model):
         compute=False,
     )
 
+    def _get_under_validation_exceptions(self):
+        res = super()._get_under_validation_exceptions()
+        res.append("resource_ref")
+        return res
+
     def action_confirm(self):
         res = super().action_confirm()
         self.write({"state": "pending"})

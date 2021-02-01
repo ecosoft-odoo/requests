@@ -15,8 +15,22 @@
                     name="quantity"
                     attrs="{
                     'column_invisible': [('parent.has_quantity', '=', 'no')],
-                    'required': [('parent.has_quantity', '=', 'required'), ('parent.state', '!=', 'new')],
+                    'required': [('parent.has_quantity', '=', 'required')],
                     }"
+                />
+                <field
+                    name="price_unit"
+                    attrs="{
+                    'column_invisible': [('parent.has_quantity', '=', 'no')],
+                    'required': [('parent.has_quantity', '=', 'required')],
+                    }"
+                />
+                <field
+                    name="price_subtotal"
+                    attrs="{
+                    'column_invisible': [('parent.has_quantity', '=', 'no')],
+                    }"
+                    sum="Total"
                 />
                 <field
                     name="product_uom_id"

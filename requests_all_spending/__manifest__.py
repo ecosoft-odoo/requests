@@ -17,6 +17,8 @@
     ],
     "data": [
         "data/request_category_data.xml",
+        "views/request_views.xml",
+        "views/request_category_views.xml",
         "views/request_product_line_views.xml",
     ],
     "demo": [

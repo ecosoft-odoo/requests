@@ -24,7 +24,6 @@ class RequestRequest(models.Model):
             return
         values = {
             "advance": True,
-            "unit_amount": self.amount,
         }
         Expense = self.env["hr.expense"]
         specs = Expense._onchange_spec()
@@ -34,6 +33,12 @@ class RequestRequest(models.Model):
             if isinstance(val, tuple):
                 value[name] = val[0]
         values.update(value)
+        values.update(
+            {
+                "unit_amount": self.amount,
+                "quantity": 1,
+            }
+        )
         advance = Expense.create(values)
         advance.action_submit_expenses()
         self.resource_ref = "{},{}".format(

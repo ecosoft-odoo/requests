@@ -43,9 +43,11 @@ class RequestRequest(models.Model):
 
     def action_create_hr_expense(self):
         self.ensure_one()
+        lines = self.product_line_ids._filter_hr_expense_line()
+        if not lines:
+            return
         val = self._prepare_hr_expense_sheet()
         new = self.env["hr.expense.sheet"].create(val)
-        lines = self.product_line_ids._filter_hr_expense_line()
         for line in lines:
             line_val = self._prepare_hr_expense_line(line, new)
             new_line = self.env["hr.expense"].create(line_val)

@@ -6,7 +6,13 @@
         <field name="inherit_id" ref="requests.request_product_line_view_tree" />
         <field name="arch" type="xml">
             <field name="product_uom_category_id" position="after">
-                <field name="res_type" required="1" />
+                <field
+                    name="res_type"
+                    attrs="{
+                    'column_invisible': [('parent.has_res_type', '=', 'no')],
+                    'required': [('parent.has_res_type', '=', 'required')],
+                    }"
+                />
             </field>
         </field>
     </record>

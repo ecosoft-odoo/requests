@@ -72,9 +72,9 @@
         <field name="arch" type="xml">
             <form string="Request" create="false">
                 <header>
-                    <field name="user_status" invisible="0" />
+                    <field name="user_status" invisible="1" />
                     <field name="use_approver" invisible="1" />
-                    <field name="has_access_to_request" invisible="0" />
+                    <field name="has_access_to_request" invisible="1" />
                     <button
                         name="action_confirm"
                         string="Submit"
@@ -125,7 +125,11 @@
                         highlight="1"
                         attrs="{'invisible': [('attachment_number', '&gt;=', 1)]}"
                     />
-                    <field name="state" widget="statusbar" />
+                    <field
+                        name="state"
+                        widget="statusbar"
+                        statusbar_visible="new,pending,approved"
+                    />
                 </header>
                 <sheet>
                     <field name="has_date" invisible="1" />

@@ -47,10 +47,12 @@ class RequestRequest(models.Model):
 
     def action_create_purchase_request(self):
         self.ensure_one()
+        lines = self.product_line_ids._filter_purchase_request_line()
+        if not lines:
+            return
         val = self.env["purchase.request"].default_get(["name"])
         val.update(self._prepare_purchase_request())
         new = self.env["purchase.request"].create(val)
-        lines = self.product_line_ids._filter_purchase_request_line()
         for line in lines:
             line_val = self._prepare_purchase_request_line(line, new)
             new_line = self.env["purchase.request.line"].create(line_val)

@@ -30,6 +30,10 @@ class RequestProductLine(models.Model):
         related="product_id.uom_id.category_id"
     )
     quantity = fields.Float("Quantity", default=1.0)
+    price_unit = fields.Float("Unit Price", default=1.0)
+    price_subtotal = fields.Float(
+        "Total", default=1.0, compute="_compute_price_subtotal"
+    )
     resource_ref = fields.Reference(
         string="Line Ref",
         selection=lambda self: [
@@ -47,3 +51,8 @@ class RequestProductLine(models.Model):
                 self.description = self.product_id.display_name
         else:
             self.product_uom_id = None
+
+    @api.depends("quantity", "price_unit")
+    def _compute_price_subtotal(self):
+        for rec in self:
+            rec.price_subtotal = rec.price_unit * rec.quantity

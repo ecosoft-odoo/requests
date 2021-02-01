@@ -8,8 +8,8 @@ class RequestProductLine(models.Model):
 
     res_type = fields.Selection(
         selection=[
-            ("ex", "EX"),
-            ("pr", "PR"),
+            ("pr", "Purchase"),
+            ("ex", "Expense"),
         ],
         string="Type",
         help="Line's type will ensure different document get created",
