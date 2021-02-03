@@ -1,4 +1,6 @@
-# Part of Odoo. See LICENSE file for full copyright and licensing details.
+# Copyright 2021 Ecosoft
+# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
+
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 
@@ -20,6 +22,7 @@ class RequestRequest(models.Model):
     category_id = fields.Many2one(
         "request.category", string="Category", required=True
     )
+    use_approver = fields.Boolean(related="category_id.use_approver")
     approver_ids = fields.One2many(
         "request.approver",
         "request_id",
@@ -159,20 +162,25 @@ class RequestRequest(models.Model):
         return res
 
     def action_confirm(self):
-        if len(self.approver_ids) < self.request_minimum:
-            raise UserError(
-                _(
-                    "You have to add at least %s approvers to confirm your request.",
-                    self.request_minimum,
+        self.ensure_one()
+
+        if self.use_approver:
+            if len(self.approver_ids) < self.request_minimum:
+                raise UserError(
+                    _(
+                        "You have to add at least %s approvers "
+                        "to confirm your request.",
+                        self.request_minimum,
+                    )
                 )
+            approvers = self.mapped("approver_ids").filtered(
+                lambda approver: approver.status == "new"
             )
+            approvers._create_activity()
+            approvers.write({"status": "pending"})
+
         if self.requirer_document == "required" and not self.attachment_number:
             raise UserError(_("You have to attach at lease one document."))
-        approvers = self.mapped("approver_ids").filtered(
-            lambda approver: approver.status == "new"
-        )
-        approvers._create_activity()
-        approvers.write({"status": "pending"})
         self.write({"date_confirmed": fields.Datetime.now()})
 
     def _get_user_request_activities(self, user):

@@ -1,4 +1,5 @@
-# Part of Odoo. See LICENSE file for full copyright and licensing details.
+# Copyright 2021 Ecosoft
+# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 from odoo import _, api, fields, models
 
@@ -24,7 +25,6 @@ class RequestRequest(models.Model):
             return
         values = {
             "advance": True,
-            "unit_amount": self.amount,
         }
         Expense = self.env["hr.expense"]
         specs = Expense._onchange_spec()
@@ -34,6 +34,12 @@ class RequestRequest(models.Model):
             if isinstance(val, tuple):
                 value[name] = val[0]
         values.update(value)
+        values.update(
+            {
+                "unit_amount": self.amount,
+                "quantity": 1,
+            }
+        )
         advance = Expense.create(values)
         advance.action_submit_expenses()
         self.resource_ref = "{},{}".format(

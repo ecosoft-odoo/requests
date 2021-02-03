@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2021 Ecosoft
+     License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl). -->
 <odoo>
     <record id="request_category_action_new_request" model="ir.actions.act_window">
         <field name="name">Dashboard</field>
@@ -85,6 +87,7 @@
                         <group>
                             <field name="description" />
                             <field name="automated_sequence" />
+                            <field name="use_approver" invisible="1" />
                             <field
                                 name="sequence_code"
                                 attrs="{
@@ -169,7 +172,11 @@
                                         options="{'horizontal': true}"
                                     />
                                 </group>
-                                <group string="Approvers" name="approvers">
+                                <group
+                                    string="Approvers"
+                                    name="approvers"
+                                    attrs="{'invisible': [('use_approver', '=', False)]}"
+                                >
                                     <field name="is_manager_approver" />
                                     <field
                                         name="user_ids"

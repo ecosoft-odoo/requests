@@ -1,4 +1,5 @@
-# Part of Odoo. See LICENSE file for full copyright and licensing details.
+# Copyright 2021 Ecosoft
+# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 from odoo import fields, models
 
@@ -8,8 +9,8 @@ class RequestProductLine(models.Model):
 
     res_type = fields.Selection(
         selection=[
-            ("ex", "EX"),
-            ("pr", "PR"),
+            ("pr", "Purchase"),
+            ("ex", "Expense"),
         ],
         string="Type",
         help="Line's type will ensure different document get created",

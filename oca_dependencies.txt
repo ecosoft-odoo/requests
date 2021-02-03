@@ -1,3 +1,4 @@
 server-ux
 purchase-workflow
 hr-expense
+hr-expense-1 https://github.com/ecosoft-odoo/hr-expense 14.0-mig-hr_expense_advance_clearing_new

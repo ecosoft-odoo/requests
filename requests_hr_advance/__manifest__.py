@@ -1,4 +1,5 @@
-# Part of Odoo. See LICENSE file for full copyright and licensing details.
+# Copyright 2021 Ecosoft
+# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 {
     "name": "Requests -> Employee Advance",
     "version": "14.0.1.0.0",
@@ -21,5 +22,5 @@
     ],
     "application": False,
     "installable": True,
-    "auto_install": True,
+    "auto_install": False,
 }

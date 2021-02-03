@@ -1,4 +1,5 @@
-# Part of Odoo. See LICENSE file for full copyright and licensing details.
+# Copyright 2021 Ecosoft
+# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 
 from odoo import _, api, fields, models
 
@@ -30,7 +31,6 @@ class RequestRequest(models.Model):
             "company_id": self.company_id.id,
             "requested_by": self.request_owner_id.id,
             "description": "DESCRIPTION",
-            "name": "/",
         }
         return val
 
@@ -48,9 +48,12 @@ class RequestRequest(models.Model):
 
     def action_create_purchase_request(self):
         self.ensure_one()
-        val = self._prepare_purchase_request()
-        new = self.env["purchase.request"].create(val)
         lines = self.product_line_ids._filter_purchase_request_line()
+        if not lines:
+            return
+        val = self.env["purchase.request"].default_get(["name"])
+        val.update(self._prepare_purchase_request())
+        new = self.env["purchase.request"].create(val)
         for line in lines:
             line_val = self._prepare_purchase_request_line(line, new)
             new_line = self.env["purchase.request.line"].create(line_val)

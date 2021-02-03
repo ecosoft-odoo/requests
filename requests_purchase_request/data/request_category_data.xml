@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2021 Ecosoft
+     License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl). -->
 <odoo>
     <data noupdate="1">
         <record id="request_category_data_purchase_request" model="request.category">
-            <field name="name">Create PR's</field>
+            <field name="name">Purchase Request</field>
             <field
                 name="server_action_ids"
                 eval="[(4, ref('requests_purchase_request.server_action_create_purchase_request'))]"
@@ -16,7 +18,7 @@
             <field name="has_product">required</field>
             <field name="has_quantity">required</field>
             <field name="automated_sequence" eval="True" />
-            <field name="sequence_code">APPR</field>
+            <field name="sequence_code">RQPR</field>
         </record>
     </data>
 </odoo>

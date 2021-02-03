@@ -1,4 +1,5 @@
-# Part of Odoo. See LICENSE file for full copyright and licensing details.
+# Copyright 2021 Ecosoft
+# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 {
     "name": "Requests -> All Spending (PR/EX/AV)",
     "version": "14.0.1.0.0",
@@ -17,6 +18,8 @@
     ],
     "data": [
         "data/request_category_data.xml",
+        "views/request_views.xml",
+        "views/request_category_views.xml",
         "views/request_product_line_views.xml",
     ],
     "demo": [

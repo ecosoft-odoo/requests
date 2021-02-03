@@ -1,5 +1,5 @@
-# Part of Odoo. See LICENSE file for full copyright and licensing details.
-
+# Copyright 2021 Ecosoft
+# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 from odoo import _, api, fields, models
 
 
@@ -44,9 +44,11 @@ class RequestRequest(models.Model):
 
     def action_create_hr_expense(self):
         self.ensure_one()
+        lines = self.product_line_ids._filter_hr_expense_line()
+        if not lines:
+            return
         val = self._prepare_hr_expense_sheet()
         new = self.env["hr.expense.sheet"].create(val)
-        lines = self.product_line_ids._filter_hr_expense_line()
         for line in lines:
             line_val = self._prepare_hr_expense_line(line, new)
             new_line = self.env["hr.expense"].create(line_val)

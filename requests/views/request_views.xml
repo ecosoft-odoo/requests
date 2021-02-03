@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2021 Ecosoft
+     License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl). -->
 <odoo>
 
 <!--Request-->
@@ -73,6 +75,7 @@
             <form string="Request" create="false">
                 <header>
                     <field name="user_status" invisible="1" />
+                    <field name="use_approver" invisible="1" />
                     <field name="has_access_to_request" invisible="1" />
                     <button
                         name="action_confirm"
@@ -124,7 +127,11 @@
                         highlight="1"
                         attrs="{'invisible': [('attachment_number', '&gt;=', 1)]}"
                     />
-                    <field name="state" widget="statusbar" />
+                    <field
+                        name="state"
+                        widget="statusbar"
+                        statusbar_visible="new,pending,approved"
+                    />
                 </header>
                 <sheet>
                     <field name="has_date" invisible="1" />
@@ -268,7 +275,11 @@
                                 attrs="{'readonly':[('state','not in',('new', 'pending'))]}"
                             />
                         </page>
-                        <page string="Approver(s)" name="approvers">
+                        <page
+                            string="Approver(s)"
+                            name="approvers"
+                            attrs="{'invisible': [('use_approver', '=', False)]}"
+                        >
                             <field name="approver_ids" mode="tree,kanban">
                                 <tree
                                     editable="bottom"

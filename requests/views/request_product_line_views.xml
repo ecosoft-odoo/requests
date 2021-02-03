@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2021 Ecosoft
+     License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl). -->
 <odoo>
     <record id="request_product_line_view_tree" model="ir.ui.view">
         <field name="name">request.product.line.view.tree</field>
@@ -15,8 +17,22 @@
                     name="quantity"
                     attrs="{
                     'column_invisible': [('parent.has_quantity', '=', 'no')],
-                    'required': [('parent.has_quantity', '=', 'required'), ('parent.state', '!=', 'new')],
+                    'required': [('parent.has_quantity', '=', 'required')],
                     }"
+                />
+                <field
+                    name="price_unit"
+                    attrs="{
+                    'column_invisible': [('parent.has_quantity', '=', 'no')],
+                    'required': [('parent.has_quantity', '=', 'required')],
+                    }"
+                />
+                <field
+                    name="price_subtotal"
+                    attrs="{
+                    'column_invisible': [('parent.has_quantity', '=', 'no')],
+                    }"
+                    sum="Total"
                 />
                 <field
                     name="product_uom_id"
