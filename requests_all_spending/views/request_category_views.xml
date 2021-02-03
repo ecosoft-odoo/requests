@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2021 Ecosoft
+     License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl). -->
 <odoo>
 
     <record id="request_category_view_form" model="ir.ui.view">

@@ -1,4 +1,6 @@
-# Part of Odoo. See LICENSE file for full copyright and licensing details.
+# Copyright 2021 Ecosoft
+# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
+
 from odoo import _, api, fields, models
 from odoo.exceptions import UserError
 

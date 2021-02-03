@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2021 Ecosoft
+     License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl). -->
 <odoo>
     <record model="ir.actions.server" id="server_action_create_hr_advance">
         <field name="name">Requests - Create Employee Advance</field>

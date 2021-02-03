@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2021 Ecosoft
+     License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl). -->
 <odoo>
     <data noupdate="1">
         <record id="request_category_data_all_spending" model="request.category">
@@ -20,7 +22,7 @@
             <field name="has_amount">required</field>
             <field name="has_res_type">required</field>
             <field name="automated_sequence" eval="True" />
-            <field name="sequence_code">APPR</field>
+            <field name="sequence_code">RQSP</field>
         </record>
     </data>
 </odoo>

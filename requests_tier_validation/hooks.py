@@ -1,5 +1,5 @@
-# © 2017 Ecosoft (ecosoft.co.th).
-# License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
+# Copyright 2021 Ecosoft
+# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 from odoo import SUPERUSER_ID, api
 
 ACTIONS = ("requests.request_request_action_to_review",)
