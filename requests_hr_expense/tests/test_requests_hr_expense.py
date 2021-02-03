@@ -4,12 +4,12 @@
 from odoo.tests.common import Form, SavepointCase
 
 
-class TestRequestsPurchaseRequest(SavepointCase):
+class TestRequestsHRExpense(SavepointCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
         cls.category_pr = cls.env.ref(
-            "requests_purchase_request.request_category_data_purchase_request"
+            "requests_hr_expense.request_category_data_hr_expense"
         )
         cls.approver = cls.env.ref("base.user_admin")
         cls.product_mouse = cls.env["product.product"].create(
@@ -39,8 +39,8 @@ class TestRequestsPurchaseRequest(SavepointCase):
             req_approver.user_id = approver
         return create_request_form
 
-    def test_01_purchase_request(self):
-        # Create new purchase request request and create purchase request.
+    def test_01_hr_expense(self):
+        # Create new expense request and create expense.
         request_form = self.create_request_form(
             self.approver, self.category_pr
         )
@@ -56,8 +56,8 @@ class TestRequestsPurchaseRequest(SavepointCase):
         request.action_confirm()
         request.with_user(self.approver).action_approve()
         # Now, a PR should have been created
-        self.assertEqual(request.purchase_request_count, 1)
-        res = request.action_open_purchase_request()
-        pr_id = res["domain"][0][2]
-        purchase_request = self.env["purchase.request"].browse(pr_id)
-        self.assertEqual(len(purchase_request.line_ids), 2)
+        self.assertEqual(request.hr_expense_count, 1)
+        res = request.action_open_hr_expense()
+        ex_id = res["domain"][0][2]
+        expense = self.env["hr.expense.sheet"].browse(ex_id)
+        self.assertEqual(len(expense.expense_line_ids), 2)

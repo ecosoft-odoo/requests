@@ -37,7 +37,7 @@ class RequestRequest(models.Model):
             "product_id": line.product_id.id,
             "name": line.description,
             "quantity": line.quantity,
-            "unit_amount": 1111,
+            "unit_amount": line.price_unit,
             "product_uom_id": line.product_uom_id.id,
         }
         return line_val
