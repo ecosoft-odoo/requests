@@ -30,7 +30,7 @@ class RequestRequest(models.Model):
             "origin": self.name,
             "company_id": self.company_id.id,
             "requested_by": self.request_owner_id.id,
-            "description": "DESCRIPTION",
+            "description": self.reason,
         }
         return val
 
@@ -38,11 +38,10 @@ class RequestRequest(models.Model):
         line_val = {
             "request_id": purchase_request.id,
             "product_id": line.product_id.id,
-            "name": "PRODUCT XXX",
+            "name": line.product_id.display_name,
             "product_qty": line.quantity,
             "product_uom_id": line.product_uom_id.id,
-            "estimated_cost": 1111,
-            "specifications": "SPEC XXX",
+            "estimated_cost": line.price_subtotal,
         }
         return line_val
 
