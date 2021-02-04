@@ -4,7 +4,7 @@
     "name": "Requests -> All Spending (PR/EX/AV)",
     "version": "14.0.1.0.0",
     "category": "Human Resources/Requests",
-    "website": "https://github.com/OCA/account-payment",
+    "website": "https://github.com/OCA/requests",
     "summary": """
         This module adds to the requests workflow the possibility to generate
         Purchase Request from an Requests of Purchase Request.

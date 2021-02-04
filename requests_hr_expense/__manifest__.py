@@ -3,7 +3,7 @@
     "name": "Requests -> Employee Report",
     "version": "14.0.1.0.0",
     "category": "Human Resources/Requests",
-    "website": "https://github.com/OCA/account-payment",
+    "website": "https://github.com/OCA/requests",
     "summary": """
         This module adds to the requests workflow the possibility to generate
         Employee Expense Report from an Requests.

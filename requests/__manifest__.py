@@ -5,7 +5,7 @@
     "version": "14.0.1.0.0",
     "author": "Ecosoft, Odoo Community Association (OCA)",
     "category": "Human Resources/Requests",
-    "website": "https://github.com/OCA/account-payment",
+    "website": "https://github.com/OCA/requests",
     "license": "AGPL-3",
     "summary": "Create and validate requests",
     "depends": ["mail", "hr", "product"],
