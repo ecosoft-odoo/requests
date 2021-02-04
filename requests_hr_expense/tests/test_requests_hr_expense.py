@@ -8,7 +8,7 @@ class TestRequestsHRExpense(SavepointCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.category_pr = cls.env.ref(
+        cls.category = cls.env.ref(
             "requests_hr_expense.request_category_data_hr_expense"
         )
         cls.approver = cls.env.ref("base.user_admin")
@@ -41,9 +41,7 @@ class TestRequestsHRExpense(SavepointCase):
 
     def test_01_hr_expense(self):
         # Create new expense request and create expense.
-        request_form = self.create_request_form(
-            self.approver, self.category_pr
-        )
+        request_form = self.create_request_form(self.approver, self.category)
         with request_form.product_line_ids.new() as line:
             line.product_id = self.product_mouse
             line.quantity = 1
@@ -55,7 +53,7 @@ class TestRequestsHRExpense(SavepointCase):
         request = request_form.save()
         request.action_confirm()
         request.with_user(self.approver).action_approve()
-        # Now, a PR should have been created
+        # Now, a EX should have been created
         self.assertEqual(request.hr_expense_count, 1)
         res = request.action_open_hr_expense()
         ex_id = res["domain"][0][2]

@@ -4,24 +4,28 @@
 from odoo.tests.common import Form, SavepointCase
 
 
-class TestRequestsPurchaseRequest(SavepointCase):
+class TestRequestsHRAdvance(SavepointCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
         cls.category = cls.env.ref(
-            "requests_purchase_request.request_category_data_purchase_request"
+            "requests_hr_advance.request_category_data_hr_advance"
         )
         cls.approver = cls.env.ref("base.user_admin")
-        cls.product_mouse = cls.env["product.product"].create(
+        advance_account = cls.env["account.account"].create(
             {
-                "name": "Computer Mouse",
+                "code": "154000",
+                "name": "Employee Advance",
+                "user_type_id": cls.env.ref(
+                    "account.data_account_type_current_assets"
+                ).id,
+                "reconcile": True,
             }
         )
-        cls.product_laptop = cls.env["product.product"].create(
-            {
-                "name": "Laptop",
-            }
+        cls.emp_advance = cls.env.ref(
+            "hr_expense_advance_clearing.product_emp_advance"
         )
+        cls.emp_advance.property_account_expense_id = advance_account
 
     def create_request_form(self, approver, category):
         if category.automated_sequence:
@@ -39,23 +43,16 @@ class TestRequestsPurchaseRequest(SavepointCase):
             req_approver.user_id = approver
         return create_request_form
 
-    def test_01_purchase_request(self):
-        # Create new purchase request request and create purchase request.
+    def test_01_hr_advance(self):
+        # Create new advance request and create advance.
         request_form = self.create_request_form(self.approver, self.category)
-        with request_form.product_line_ids.new() as line:
-            line.product_id = self.product_mouse
-            line.quantity = 1
-            line.price_unit = 100
-        with request_form.product_line_ids.new() as line:
-            line.product_id = self.product_mouse
-            line.quantity = 2
-            line.price_unit = 1000
+        request_form.amount = 1000
         request = request_form.save()
         request.action_confirm()
         request.with_user(self.approver).action_approve()
-        # Now, a PR should have been created
-        self.assertEqual(request.purchase_request_count, 1)
-        res = request.action_open_purchase_request()
-        pr_id = res["domain"][0][2]
-        purchase_request = self.env["purchase.request"].browse(pr_id)
-        self.assertEqual(len(purchase_request.line_ids), 2)
+        # Now, a AV should have been created
+        self.assertEqual(request.hr_advance_count, 1)
+        res = request.action_open_hr_advance()
+        ex_id = res["domain"][0][2]
+        expense = self.env["hr.expense.sheet"].browse(ex_id)
+        self.assertTrue(expense.advance)
