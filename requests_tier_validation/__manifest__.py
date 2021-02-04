@@ -6,7 +6,7 @@
     "support a tier validation process.",
     "version": "14.0.1.0.0",
     "category": "Purchase Management",
-    "website": "https://github.com/OCA/account-payment",
+    "website": "https://github.com/OCA/requests",
     "author": "Ecosoft, Odoo Community Association (OCA)",
     "license": "AGPL-3",
     "depends": ["requests", "base_tier_validation"],
