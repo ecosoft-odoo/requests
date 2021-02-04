@@ -7,7 +7,7 @@ from odoo.tests import common
 
 
 class TestRequest(common.TransactionCase):
-    def test_compute_state(self):
+    def test_01_compute_state(self):
         category_test = self.env["request.category"].browse(1)
         record = self.env["request.request"].create(
             {
@@ -73,3 +73,12 @@ class TestRequest(common.TransactionCase):
         with self.assertRaises(UserError):
             record.action_confirm()
         self.assertEqual(record.state, "new")
+
+    def test_02_context_overwrite(self):
+        category_test = self.env["request.category"].browse(1)
+        category_test.context_overwrite = (
+            "{'default_amount': 100, 'xxx': env.user.id}"
+        )
+        res = category_test.create_request()
+        context = res.get("context", {})
+        self.assertEqual(context.get("default_amount"), 100)

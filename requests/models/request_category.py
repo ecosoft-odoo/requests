@@ -4,7 +4,9 @@
 import base64
 
 from odoo import _, api, fields, models
+from odoo.exceptions import ValidationError
 from odoo.modules.module import get_module_resource
+from odoo.tools.safe_eval import safe_eval
 
 CATEGORY_SELECTION = [
     ("required", "Required"),
@@ -114,6 +116,15 @@ class RequestCategory(models.Model):
         help="Server action that can get executed after the request is approved",
     )
     use_approver = fields.Boolean(compute="_compute_use_approver")
+    context_overwrite = fields.Text(
+        help="""
+Valid dictionary to overwrite default context on New Request,
+use env for self.env, i.e.,
+{"default_amount": 100000,
+ "default_location": "G2 Building, Bangkok",
+ "default_request_owner_id": env.user.id}
+        """
+    )
 
     def _compute_use_approver(self):
         self.update({"use_approver": self._use_approver})
@@ -183,7 +194,7 @@ class RequestCategory(models.Model):
             name = self.sequence_id.next_by_id()
         else:
             name = self.name
-        return {
+        res = {
             "type": "ir.actions.act_window",
             "res_model": "request.request",
             "views": [[False, "form"]],
@@ -195,3 +206,26 @@ class RequestCategory(models.Model):
                 "default_state": "new",
             },
         }
+        overwrite_vals = self._get_overwrite_vals()
+        res["context"].update(overwrite_vals)
+        return res
+
+    def _get_overwrite_vals(self):
+        """valid_dict = {
+            "default_amount": 10000,
+            "default_location": "G2 Building, Bangkok",
+            "deafult_request_owner_id": env.user.id,
+        }
+        """
+        self.ensure_one()
+        overwrite_vals = self.context_overwrite or "{}"
+        try:
+            overwrite_vals = safe_eval(
+                overwrite_vals, globals_dict={"env": self.env}
+            )
+            assert isinstance(overwrite_vals, dict)
+        except (SyntaxError, ValueError, AssertionError):
+            raise ValidationError(
+                _("Overwrite value must be a valid python dict")
+            )
+        return overwrite_vals

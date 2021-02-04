@@ -104,6 +104,10 @@
                         <group>
                             <field name="active" readonly="1" />
                             <field name="server_action_ids" widget="many2many_tags" />
+                            <field
+                                name="context_overwrite"
+                                widget="section_and_note_text"
+                            />
                         </group>
                     </group>
                     <notebook>
