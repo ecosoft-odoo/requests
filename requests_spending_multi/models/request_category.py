@@ -15,3 +15,10 @@ class RequestCategory(models.Model):
         default="no",
         required=True,
     )
+    default_res_type = fields.Selection(
+        selection=[
+            ("pr", "Purchase"),
+            ("ex", "Expense"),
+        ],
+        string="Default Type",
+    )

@@ -8,3 +8,4 @@ class RequestRequest(models.Model):
     _inherit = "request.request"
 
     has_res_type = fields.Selection(related="category_id.has_res_type")
+    default_res_type = fields.Selection(related="category_id.default_res_type")

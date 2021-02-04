@@ -11,7 +11,11 @@
             <field name="has_quantity" position="after">
                 <field
                     name="has_res_type"
-                    string="Request Type"
+                    widget="radio"
+                    options="{'horizontal': true}"
+                />
+                <field
+                    name="default_res_type"
                     widget="radio"
                     options="{'horizontal': true}"
                 />
