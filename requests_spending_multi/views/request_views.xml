@@ -10,6 +10,12 @@
         <field name="arch" type="xml">
             <field name="has_quantity" position="after">
                 <field name="has_res_type" invisible="1" />
+                <field name="default_res_type" invisible="1" />
+            </field>
+            <field name="product_line_ids" position="attributes">
+                <attribute name="context">
+                    {'tree_view_ref': 'requests.request_product_line_view_tree', 'default_res_type': default_res_type}
+                </attribute>
             </field>
         </field>
     </record>
