@@ -3,7 +3,7 @@
      License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl). -->
 <odoo>
     <data noupdate="1">
-        <record id="request_category_data_all_spending" model="request.category">
+        <record id="request_category_data_spending_multi" model="request.category">
             <field name="name">Spending Request</field>
             <field
                 name="server_action_ids"
