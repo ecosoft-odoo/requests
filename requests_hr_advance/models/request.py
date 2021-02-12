@@ -21,8 +21,19 @@ class RequestRequest(models.Model):
 
     def action_create_hr_advance(self):
         self.ensure_one()
+        Expense = self.env["hr.expense"]
         if not self.amount > 0:  # No amount, no create advance
             return
+        values = self._prepare_advance_vals()
+        advance = Expense.create(values)
+        advance.action_submit_expenses()
+        self.resource_ref = "{},{}".format(
+            advance.sheet_id._name,
+            advance.sheet_id.id,
+        )
+
+    def _prepare_advance_vals(self):
+        self.ensure_one()
         values = {
             "advance": True,
         }
@@ -40,12 +51,7 @@ class RequestRequest(models.Model):
                 "quantity": 1,
             }
         )
-        advance = Expense.create(values)
-        advance.action_submit_expenses()
-        self.resource_ref = "{},{}".format(
-            advance.sheet_id._name,
-            advance.sheet_id.id,
-        )
+        return values
 
     def action_open_hr_advance(self):
         self.ensure_one()
