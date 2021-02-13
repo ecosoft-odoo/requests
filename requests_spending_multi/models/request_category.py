@@ -19,6 +19,7 @@ class RequestCategory(models.Model):
         selection=[
             ("pr", "Purchase"),
             ("ex", "Expense"),
+            ("av", "Advance"),
         ],
         string="Default Type",
     )

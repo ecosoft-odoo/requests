@@ -11,6 +11,7 @@ class RequestProductLine(models.Model):
         selection=[
             ("pr", "Purchase"),
             ("ex", "Expense"),
+            ("av", "Advance"),
         ],
         string="Type",
         help="Line's type will ensure different document get created",
@@ -21,6 +22,14 @@ class RequestProductLine(models.Model):
             super()
             ._filter_hr_expense_line()
             .filtered(lambda l: l.res_type == "ex")
+        )
+        return lines
+
+    def _filter_hr_advance_line(self):
+        lines = (
+            super()
+            ._filter_hr_advance_line()
+            .filtered(lambda l: l.res_type == "av")
         )
         return lines
 
