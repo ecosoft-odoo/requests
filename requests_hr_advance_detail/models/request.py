@@ -11,16 +11,21 @@ class RequestRequest(models.Model):
         """ Add advance lines """
         values = super()._prepare_advance_vals()
         adv_lines = []
-        for request_line in self.product_line_ids:
+        adv_amount = 0.0
+        lines = self.product_line_ids._filter_hr_advance_line()
+        if not lines:
+            return values
+        for line in lines:
             adv_lines.append(
                 (
                     0,
                     0,
                     {
-                        "name": request_line.description,
-                        "unit_amount": request_line.price_subtotal,
+                        "name": line.description,
+                        "unit_amount": line.price_subtotal,
                     },
                 )
             )
-        values.update({"advance_line": adv_lines})
+            adv_amount += line.price_subtotal
+        values.update({"advance_line": adv_lines, "unit_amount": adv_amount})
         return values
