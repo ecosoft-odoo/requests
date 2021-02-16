@@ -26,7 +26,7 @@ class OperatingUnit(models.Model):
     user_ids = fields.Many2many(
         "res.users",
         "operating_unit_users_rel",
-        "poid",
+        "operating_unit_id",
         "user_id",
         "Users Allowed",
     )
