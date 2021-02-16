@@ -36,6 +36,13 @@ class TestOperatingUnit(common.TransactionCase):
         self.user2 = self._create_user(
             "user_2", self.grp_ou_multi, self.company, self.b2c
         )
+        # Create User 3 with all OU
+        self.user3 = self._create_user(
+            "user_3",
+            self.grp_ou_multi,
+            self.company,
+            [self.ou1, self.b2c, self.b2b],
+        )
 
     def _create_user(
         self, login, group, company, operating_units, context=None
@@ -49,7 +56,7 @@ class TestOperatingUnit(common.TransactionCase):
                 "email": "test@yourcompany.com",
                 "company_id": company.id,
                 "company_ids": [(4, company.id)],
-                "default_operating_unit_id": operating_units.id,
+                "default_operating_unit_id": operating_units[0].id,
                 "operating_unit_ids": [(4, ou.id) for ou in operating_units],
                 "sel_groups_13_14": group.id,
             }
@@ -99,6 +106,7 @@ class TestOperatingUnit(common.TransactionCase):
             .search([])
             .mapped("code")
         )
+
         nou = self.env["operating.unit"].search(
             [
                 "|",
@@ -128,7 +136,9 @@ class TestOperatingUnit(common.TransactionCase):
             .mapped("code")
         )
         self.assertEqual(
-            len(operating_unit_list_2), 1, "User 2 should have access to one ou"
+            len(operating_unit_list_2),
+            1,
+            "User 2 should have access to one ou",
         )
         self.assertEqual(
             operating_unit_list_2[0],
@@ -155,3 +165,11 @@ class TestOperatingUnit(common.TransactionCase):
 
         # User1 should see 3 request(2 Demo data(No Operating Unit) + 1 New request)
         self.assertEqual(len(request_list1), 3)
+
+        ou_list1 = self.env["operating.unit"].name_search(
+            "B2B_changed", operator="ilike"
+        )
+        self.assertTrue(
+            self.b2b
+            in self.env["operating.unit"].browse(i[0] for i in ou_list1)
+        )
