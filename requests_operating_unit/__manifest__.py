@@ -10,7 +10,7 @@
     "summary": "Manage requests record rules by operating unit",
     "depends": ["requests", "operating_unit"],
     "data": [
-        # "views/request_views.xml",
+        "views/request_views.xml",
         "security/operating_unit_security.xml",
     ],
     "installable": True,
