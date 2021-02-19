@@ -10,7 +10,7 @@
             ('operating_unit_id','=',user.default_operating_unit_id.id),
             ('operating_unit_id','in',[g.id for g in user.operating_unit_ids])]
         </field>
-        <field name="name">Requests from allowed operating units</field>
+        <field name="name">Requests form allowed operating units</field>
         <field name="global" eval="True" />
         <field eval="1" name="perm_unlink" />
         <field eval="1" name="perm_write" />
