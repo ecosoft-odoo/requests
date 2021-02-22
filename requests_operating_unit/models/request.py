@@ -14,7 +14,7 @@ class RequestOperatingUnit(models.Model):
         ].operating_unit_default_get(),
     )
 
-    @api.onchange("approver_ids", "operating_unit_id")
+    @api.constrains("approver_ids", "operating_unit_id")
     def _check_approver_operating_unit(self):
         for r in self.approver_ids:
             if (
