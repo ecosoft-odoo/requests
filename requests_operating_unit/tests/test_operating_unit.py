@@ -72,6 +72,16 @@ class TestOperatingUnit(common.TransactionCase):
                 }
             )
         )
+
+        first_approver = self.env["request.approver"].create(
+            {"user_id": 1, "request_id": record.id, "status": "new"}
+        )
+        second_approver = self.env["request.approver"].create(
+            {"user_id": 2, "request_id": record.id, "status": "new"}
+        )
+        record.approver_ids += first_approver
+        record.approver_ids += second_approver
+
         return record
 
     def test_01_operating_unit(self):
