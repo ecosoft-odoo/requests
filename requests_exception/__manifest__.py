@@ -8,7 +8,7 @@
     "category": "Generic Modules/Purchase",
     "author": "Ecosoft, Odoo Community Association (OCA)",
     "website": "https://github.com/OCA/requests",
-    "depends": ["requests", "base_exception", "requests_tier_validation"],
+    "depends": ["requests", "base_exception"],
     "license": "AGPL-3",
     "data": [
         "security/ir.model.access.csv",

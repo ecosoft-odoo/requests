@@ -25,11 +25,11 @@ class RequestRequest(models.Model):
         all_exceptions += lines.detect_exceptions()
         return all_exceptions
 
-    # @api.constrains("ignore_exception", "product_line_ids", "state")
-    # def request_check_exception(self):
-    #     requests = self.filtered(lambda s: s.state == "pending")
-    #     if requests:
-    #         requests._check_exception()
+    @api.constrains("ignore_exception", "product_line_ids", "state")
+    def request_check_exception(self):
+        requests = self.filtered(lambda s: s.state == "pending")
+        if requests:
+            requests._check_exception()
 
     @api.onchange("product_line_ids")
     def onchange_ignore_exception(self):
@@ -55,3 +55,10 @@ class RequestRequest(models.Model):
             "requests_exception.action_request_exception_confirm"
         )
         return action
+
+    @api.depends("approver_ids.status")
+    def _compute_state(self):
+        """ For requests only, state is a computed field """
+        exception_requests = self.filtered("exception_ids")
+        exception_requests.update({"state": "new"})
+        super(RequestRequest, self - exception_requests)._compute_state()
