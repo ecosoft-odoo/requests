@@ -16,6 +16,7 @@
         "data/ir_actions_server.xml",
         "data/request_category_data.xml",
         "views/request_views.xml",
+        "views/purchase_request_views.xml",
     ],
     "demo": [
         "data/request_demo.xml",

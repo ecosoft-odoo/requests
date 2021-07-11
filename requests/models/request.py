@@ -180,7 +180,7 @@ class RequestRequest(models.Model):
             approvers.write({"status": "pending"})
 
         if self.requirer_document == "required" and not self.attachment_number:
-            raise UserError(_("You have to attach at lease one document."))
+            raise UserError(_("You have to attach at least one document."))
         self.write({"date_confirmed": fields.Datetime.now()})
 
     def _get_user_request_activities(self, user):

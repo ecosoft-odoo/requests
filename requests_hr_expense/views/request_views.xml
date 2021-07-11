@@ -1,6 +1,3 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<!-- Copyright 2021 Ecosoft
-     License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl). -->
 <odoo>
     <record id="request_request_view_form" model="ir.ui.view">
         <field name="name">request.request.view.form</field>
@@ -12,8 +9,11 @@
                     name="action_open_hr_expense"
                     type="object"
                     class="oe_stat_button"
-                    icon="fa-shopping-cart"
-                    attrs="{'invisible': [('hr_expense_count', '=', 0)]}"
+                    icon="fa-usd"
+                    context="{
+                        'request_owner_id': request_owner_id,
+                        'default_requests_id': id,
+                    }"
                 >
                     <field name="hr_expense_count" string="EX" widget="statinfo" />
                 </button>

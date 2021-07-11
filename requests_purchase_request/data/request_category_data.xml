@@ -12,7 +12,7 @@
             <field
                 name="image"
                 type="base64"
-                file="requests_purchase_request/static/src/img/shopping-cart-po-solid.svg"
+                file="requests_purchase_request/static/src/img/purchase.svg"
             />
             <field name="sequence">100</field>
             <field name="has_product">required</field>

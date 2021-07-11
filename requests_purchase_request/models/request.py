@@ -13,16 +13,11 @@ class RequestRequest(models.Model):
 
     @api.depends("product_line_ids.resource_ref")
     def _compute_purchase_request_count(self):
+        PurchaseRequest = self.env["purchase.request"]
         for request in self:
-            lines = request.product_line_ids.filtered(
-                lambda l: l.resource_ref
-                and l.resource_ref._name == "purchase.request.line"
+            request.purchase_request_count = PurchaseRequest.search_count(
+                [("requests_id", "=", request.id)]
             )
-            purchase_requests = self.env["purchase.request"].browse()
-            for line in lines:
-                if line.resource_ref:
-                    purchase_requests |= line.resource_ref.request_id
-            request.purchase_request_count = len(purchase_requests)
 
     def _prepare_purchase_request(self):
         self.ensure_one()
@@ -31,6 +26,7 @@ class RequestRequest(models.Model):
             "company_id": self.company_id.id,
             "requested_by": self.request_owner_id.id,
             "description": self.reason,
+            "requests_id": self.id,
         }
         return val
 
@@ -63,14 +59,9 @@ class RequestRequest(models.Model):
 
     def action_open_purchase_request(self):
         self.ensure_one()
-        lines = self.product_line_ids.filtered(
-            lambda l: l.resource_ref
-            and l.resource_ref._name == "purchase.request.line"
+        purchase_requests = self.env["purchase.request"].search(
+            [("requests_id", "=", self.id)]
         )
-        purchase_requests = self.env["purchase.request"].browse()
-        for line in lines:
-            if line.resource_ref:
-                purchase_requests += line.resource_ref.request_id
         domain = [("id", "in", purchase_requests.ids)]
         action = {
             "name": _("Purchase Request"),

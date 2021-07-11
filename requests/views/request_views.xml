@@ -134,6 +134,7 @@
                     />
                 </header>
                 <sheet>
+                    <field name="id" invisible="1" />
                     <field name="has_date" invisible="1" />
                     <field name="has_period" invisible="1" />
                     <field name="has_quantity" invisible="1" />

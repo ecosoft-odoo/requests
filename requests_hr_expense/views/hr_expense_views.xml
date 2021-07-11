@@ -1,0 +1,24 @@
+<odoo>
+
+    <record id="view_hr_expense_sheet_form" model="ir.ui.view">
+        <field name="name">hr.expense.sheet.form</field>
+        <field name="model">hr.expense.sheet</field>
+        <field name="inherit_id" ref="hr_expense.view_hr_expense_sheet_form" />
+        <field name="arch" type="xml">
+            <xpath expr="/form/sheet/group/group" position="inside">
+                <field name="requests_id" invisible="0" />
+            </xpath>
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button
+                    name="action_open_requests"
+                    string="Requests Helper"
+                    type="object"
+                    class="oe_stat_button"
+                    icon="fa-paper-plane"
+                    attrs="{'invisible': [('requests_id', '=', False)]}"
+                />
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -10,16 +10,11 @@ class RequestRequest(models.Model):
 
     @api.depends("product_line_ids.resource_ref")
     def _compute_hr_expense_count(self):
+        Sheet = self.env["hr.expense.sheet"]
         for request in self:
-            lines = request.product_line_ids.filtered(
-                lambda l: l.resource_ref
-                and l.resource_ref._name == "hr.expense"
+            request.hr_expense_count = Sheet.search_count(
+                [("requests_id", "=", request.id)]
             )
-            sheets = self.env["hr.expense.sheet"].browse()
-            for line in lines:
-                if line.resource_ref:
-                    sheets |= line.resource_ref.sheet_id
-            request.hr_expense_count = len(sheets)
 
     def _prepare_hr_expense_sheet(self):
         self.ensure_one()
@@ -27,6 +22,7 @@ class RequestRequest(models.Model):
             "name": self.name,
             "company_id": self.company_id.id,
             "employee_id": self.request_owner_id.employee_id.id,
+            "requests_id": self.id,
         }
         return val
 
@@ -59,13 +55,9 @@ class RequestRequest(models.Model):
 
     def action_open_hr_expense(self):
         self.ensure_one()
-        lines = self.product_line_ids.filtered(
-            lambda l: l.resource_ref and l.resource_ref._name == "hr.expense"
+        sheets = self.env["hr.expense.sheet"].search(
+            [("requests_id", "=", self.id)]
         )
-        sheets = self.env["hr.expense.sheet"].browse()
-        for line in lines:
-            if line.resource_ref:
-                sheets += line.resource_ref.sheet_id
         domain = [("id", "in", sheets.ids)]
         action = {
             "name": _("Expense Report"),
