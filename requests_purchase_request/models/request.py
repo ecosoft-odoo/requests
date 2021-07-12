@@ -10,14 +10,17 @@ class RequestRequest(models.Model):
     purchase_request_count = fields.Integer(
         compute="_compute_purchase_request_count"
     )
+    purchase_request_ids = fields.One2many(
+        string="Purchase Requests",
+        comodel_name="purchase.request",
+        inverse_name="request_id",
+        copy=True,
+    )
 
     @api.depends("product_line_ids.resource_ref")
     def _compute_purchase_request_count(self):
-        PurchaseRequest = self.env["purchase.request"]
         for request in self:
-            request.purchase_request_count = PurchaseRequest.search_count(
-                [("requests_id", "=", request.id)]
-            )
+            request.purchase_request_count = len(request.purchase_request_ids)
 
     def _prepare_purchase_request(self):
         self.ensure_one()
@@ -26,7 +29,7 @@ class RequestRequest(models.Model):
             "company_id": self.company_id.id,
             "requested_by": self.request_owner_id.id,
             "description": self.reason,
-            "requests_id": self.id,
+            "request_id": self.id,
         }
         return val
 
@@ -59,17 +62,17 @@ class RequestRequest(models.Model):
 
     def action_open_purchase_request(self):
         self.ensure_one()
-        purchase_requests = self.env["purchase.request"].search(
-            [("requests_id", "=", self.id)]
-        )
-        domain = [("id", "in", purchase_requests.ids)]
+        ctx = self.env.context.copy()
+        ctx.pop("default_state", False)
+        if self.state != "new":
+            ctx.update({"create": False, "edit": False})
         action = {
             "name": _("Purchase Request"),
             "view_type": "tree",
             "view_mode": "list,form",
             "res_model": "purchase.request",
             "type": "ir.actions.act_window",
-            "context": self.env.context,
-            "domain": domain,
+            "context": ctx,
+            "domain": [("id", "in", self.purchase_request_ids.ids)],
         }
         return action

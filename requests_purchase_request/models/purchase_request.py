@@ -7,7 +7,7 @@ from odoo import _, fields, models
 class PurchaseRquest(models.Model):
     _inherit = "purchase.request"
 
-    requests_id = fields.Many2one(
+    request_id = fields.Many2one(
         comodel_name="request.request",
         index=True,
         ondelete="restrict",
@@ -19,7 +19,7 @@ class PurchaseRquest(models.Model):
             "name": _("Requests"),
             "view_mode": "form",
             "res_model": "request.request",
-            "res_id": self.requests_id.id,
+            "res_id": self.request_id.id,
             "type": "ir.actions.act_window",
             "context": self.env.context,
         }

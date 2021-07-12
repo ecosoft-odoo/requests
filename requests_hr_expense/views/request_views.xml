@@ -12,7 +12,7 @@
                     icon="fa-usd"
                     context="{
                         'request_owner_id': request_owner_id,
-                        'default_requests_id': id,
+                        'default_request_id': id,
                     }"
                 >
                     <field name="hr_expense_count" string="EX" widget="statinfo" />
