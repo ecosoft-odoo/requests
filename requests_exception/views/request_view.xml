@@ -65,10 +65,10 @@
             </field>
         </field>
     </record>
-    <record id="request_search_view_search" model="ir.ui.view">
+    <record id="request_request_view_search" model="ir.ui.view">
         <field name="name">request_exception.request_search_view_search</field>
         <field name="model">request.request</field>
-        <field name="inherit_id" ref="requests.request_search_view_search" />
+        <field name="inherit_id" ref="requests.request_request_view_search" />
         <field name="arch" type="xml">
             <filter name="filter_requests_to_review" position="after">
                 <separator orientation="vertical" />

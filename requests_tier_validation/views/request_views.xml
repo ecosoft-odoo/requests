@@ -5,7 +5,7 @@
     <record id="view_request_request_filter" model="ir.ui.view">
         <field name="name">request.request.select - requests_tier_validation</field>
         <field name="model">request.request</field>
-        <field name="inherit_id" ref="requests.request_search_view_search" />
+        <field name="inherit_id" ref="requests.request_request_view_search" />
         <field name="arch" type="xml">
             <filter name="filter_requests_to_review" position="attributes">
                 <attribute

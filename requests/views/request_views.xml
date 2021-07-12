@@ -46,7 +46,7 @@
         </field>
     </record>
 
-    <record id="request_search_view_search" model="ir.ui.view">
+    <record id="request_request_view_search" model="ir.ui.view">
         <field name="name">request.request.search</field>
         <field name="model">request.request</field>
         <field name="priority">20</field>
