@@ -2,7 +2,7 @@
     <record id="request_request_view_search" model="ir.ui.view">
         <field name="name">request.request.view.search</field>
         <field name="model">request.request</field>
-        <field name="inherit_id" ref="requests.request_request_view_search" />
+        <field name="inherit_id" ref="base_requests.request_request_view_search" />
         <field name="arch" type="xml">
             <field name="name" position="after">
                 <field
@@ -15,9 +15,9 @@
     <record id="request_request_view_form" model="ir.ui.view">
         <field name="name">request.request.view.form</field>
         <field name="model">request.request</field>
-        <field name="inherit_id" ref="requests.request_request_view_form" />
+        <field name="inherit_id" ref="base_requests.request_request_view_form" />
         <field name="arch" type="xml">
-            <field name="company_id" position="after">
+            <field name="company_id" position="before">
                 <field
                     name="operating_unit_id"
                     groups="operating_unit.group_multi_operating_unit"
@@ -31,7 +31,7 @@
     <record id="request_request_view_tree" model="ir.ui.view">
         <field name="name">request.request.view.tree</field>
         <field name="model">request.request</field>
-        <field name="inherit_id" ref="requests.request_request_view_tree" />
+        <field name="inherit_id" ref="base_requests.request_request_view_tree" />
         <field name="arch" type="xml">
             <field name="name" position="after">
                 <field

@@ -6,8 +6,8 @@
     "author": "Ecosoft, Odoo Community Association (OCA)",
     "license": "AGPL-3",
     "website": "https://github.com/OCA/requests",
-    "category": "",
-    "depends": ["requests", "operating_unit"],
+    "category": "Tools",
+    "depends": ["base_requests", "operating_unit"],
     "data": [
         "security/request_security.xml",
         "views/request_view.xml",
