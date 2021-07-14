@@ -1,0 +1,40 @@
+<odoo>
+    <record id="request_request_view_form" model="ir.ui.view">
+        <field name="name">request.request.view.form</field>
+        <field name="model">request.request</field>
+        <field name="inherit_id" ref="base_requests.request_request_view_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_cancel']" position="after">
+                <field name="use_purchase_request" invisible="1" />
+                <button
+                    name="action_create_purchase_request"
+                    string="Create Purchase Request"
+                    type="object"
+                    attrs="{'invisible':['|','|',('use_purchase_request','=',False),('state','!=','new'),('purchase_request_count','=',0)]}"
+                />
+                <button
+                    name="action_create_purchase_request"
+                    string="Create Purchase Request"
+                    type="object"
+                    class="btn-primary"
+                    attrs="{'invisible':['|','|',('use_purchase_request','=',False),('state','!=','new'),('purchase_request_count','>',0)]}"
+                />
+            </xpath>
+            <xpath expr="//button[@name='action_get_attachment_view']" position="after">
+                <button
+                    name="action_view_purchase_request"
+                    type="object"
+                    class="oe_stat_button"
+                    icon="fa-shopping-cart"
+                    attrs="{'invisible':[('use_purchase_request','=',False)]}"
+                >
+                    <field
+                        name="purchase_request_count"
+                        string="PR"
+                        widget="statinfo"
+                    />
+                </button>
+            </xpath>
+        </field>
+    </record>
+</odoo>
