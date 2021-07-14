@@ -80,7 +80,7 @@ class RequestCategory(models.Model):
     has_document = fields.Selection(
         CATEGORY_SELECTION,
         string="Documents",
-        default="optional",
+        default="no",
         required=True,
     )
     is_manager_approver = fields.Boolean(
