@@ -1,0 +1,23 @@
+<odoo>
+    <record model="ir.actions.server" id="server_action_create_purchase_request">
+        <field name="name">Requests -> Create Purchase Request</field>
+        <field name="model_id" ref="requests.model_request_request" />
+        <field name="state">code</field>
+        <field name="binding_view_types">form</field>
+        <field name="code">
+ctx = env.context.copy()
+ctx.update({
+    "default_request_id": record.id,
+    "default_requested_by": record.requested_by.id,
+})
+# return action that will open new PR with default context
+action = {
+    "name": "Purchase Request",
+    "view_mode": "form",
+    "res_model": "purchase.request",
+    "type": "ir.actions.act_window",
+    "context": ctx,
+}
+        </field>
+    </record>
+</odoo>
