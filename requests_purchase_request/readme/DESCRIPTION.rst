@@ -1,1 +1,1 @@
-This module create a new Reqeuest Type "Purchase Request"
+This module create a new Request Type "Purchase Request"

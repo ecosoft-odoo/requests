@@ -6,12 +6,12 @@ from odoo import _, fields, models
 class RequestRequest(models.Model):
     _inherit = "request.request"
 
-    use_expense = fields.Boolean(related="category_id.use_expense")
+    use_ex = fields.Boolean(related="category_id.use_ex")
     hr_expense_count = fields.Integer(compute="_compute_hr_expense_count")
     expense_sheet_ids = fields.One2many(
         string="Expense Sheets",
         comodel_name="hr.expense.sheet",
-        inverse_name="request_id",
+        inverse_name="ref_request_id",
         copy=False,
     )
 
@@ -22,7 +22,7 @@ class RequestRequest(models.Model):
     def action_view_expense(self):
         self.ensure_one()
         action = {
-            "name": _("Expense Report"),
+            "name": _("Expense Sheet"),
             "view_mode": "list,form",
             "res_model": "hr.expense.sheet",
             "type": "ir.actions.act_window",
@@ -34,11 +34,12 @@ class RequestRequest(models.Model):
     def action_create_expense(self):
         self.ensure_one()
         ctx = self.env.context.copy()
-        ctx.update(
-            {
-                "active_model": self._name,
-                "active_id": self.id,
-            }
-        )
-        action = self.category_id.expense_action_id.with_context(ctx)
-        return action.sudo().run()
+        ctx.update({"default_ref_request_id": self.id})
+        action = {
+            "name": _("Expense Sheet"),
+            "view_mode": "form",
+            "res_model": "hr.expense.sheet",
+            "type": "ir.actions.act_window",
+            "context": ctx,
+        }
+        return action

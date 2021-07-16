@@ -6,16 +6,14 @@ from odoo import _, fields, models
 class RequestRequest(models.Model):
     _inherit = "request.request"
 
-    use_purchase_request = fields.Boolean(
-        related="category_id.use_purchase_request"
-    )
+    use_pr = fields.Boolean(related="category_id.use_pr")
     purchase_request_count = fields.Integer(
         compute="_compute_purchase_request_count"
     )
     purchase_request_ids = fields.One2many(
         string="Purchase Requests",
         comodel_name="purchase.request",
-        inverse_name="request_id",
+        inverse_name="ref_request_id",
         copy=False,
     )
 
@@ -38,11 +36,12 @@ class RequestRequest(models.Model):
     def action_create_purchase_request(self):
         self.ensure_one()
         ctx = self.env.context.copy()
-        ctx.update(
-            {
-                "active_model": self._name,
-                "active_id": self.id,
-            }
-        )
-        action = self.category_id.purchase_request_action_id.with_context(ctx)
-        return action.sudo().run()
+        ctx.update({"default_ref_request_id": self.id})
+        action = {
+            "name": _("Purchase Request"),
+            "view_mode": "form",
+            "res_model": "purchase.request",
+            "type": "ir.actions.act_window",
+            "context": ctx,
+        }
+        return action

@@ -11,7 +11,7 @@ class RequestRequest(models.Model):
 
     @api.model
     def test_all_draft_requests(self):
-        request_set = self.search([("state", "=", "new")])
+        request_set = self.search([("state", "=", "draft")])
         request_set.detect_exceptions()
         return True
 

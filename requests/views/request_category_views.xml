@@ -84,7 +84,7 @@
                         </h1>
                     </div>
                     <group>
-                        <group>
+                        <group name="name" string="General Info">
                             <field name="description" />
                             <field name="automated_sequence" />
                             <field name="use_approver" invisible="1" />
@@ -101,17 +101,25 @@
                                 groups="base.group_multi_company"
                             />
                         </group>
-                        <group>
-                            <field name="active" readonly="1" />
-                            <field name="server_action_ids" widget="many2many_tags" />
+                        <group name="server_action" string="Server Actions">
+                            <field name="active" invisible="1" />
+                            <field name="draft_action_id" string="Set to Draft" />
+                            <field name="pending_action_id" string="After Submitted" />
+                            <field name="approved_action_id" string="After Approved" />
+                            <field name="refused_action_id" string="After Refused" />
+                            <field name="cancel_action_id" string="After Cancelled" />
+                            <separator string="Default Context" />
+                            <br />
                             <field
                                 name="context_overwrite"
                                 widget="section_and_note_text"
+                                nolabel="1"
+                                colspan="2"
                             />
                         </group>
                     </group>
                     <notebook>
-                        <page string="Options" name="options">
+                        <page string="Basic Data Options" name="options">
                             <group>
                                 <group string="Fields" name="option_settings">
                                     <field
@@ -184,6 +192,9 @@
                                     <field name="is_manager_approver" />
                                 </group>
                             </group>
+                        </page>
+                        <page string="Help" name="help">
+                            <field name="help" />
                         </page>
                     </notebook>
                 </sheet>
