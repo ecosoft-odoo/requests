@@ -14,15 +14,15 @@ class RequestRequest(models.Model):
     _check_company_auto = True
 
     @api.model
-    def _read_group_state(self, stages, domain, order):
-        state_list = dict(self._fields["state"].selection).keys()
-        return state_list
+    def _read_group_state(self, states, domain, order):
+        return dict(self._fields["state"].selection).keys()
 
     name = fields.Char(string="Request Subject", tracking=True)
     category_id = fields.Many2one(
         "request.category", string="Category", required=True
     )
     use_approver = fields.Boolean(related="category_id.use_approver")
+    has_child = fields.Boolean(related="category_id.has_child")
     approver_id = fields.Many2one(
         comodel_name="res.users",
         string="Approver",
@@ -50,13 +50,13 @@ class RequestRequest(models.Model):
     reason = fields.Text(string="Description")
     state = fields.Selection(
         [
-            ("new", "To Submit"),
+            ("draft", "To Submit"),
             ("pending", "Submitted"),
             ("approved", "Approved"),
             ("refused", "Refused"),
             ("cancel", "Cancel"),
         ],
-        default="new",
+        default="draft",
         tracking=True,
         group_expand="_read_group_state",
     )
@@ -66,6 +66,7 @@ class RequestRequest(models.Model):
         required=True,
         check_company=True,
         domain="[('company_ids', 'in', company_id)]",
+        default=lambda self: self.env.user,
     )
     has_access_to_request = fields.Boolean(
         string="Has Access To Request",
@@ -77,7 +78,6 @@ class RequestRequest(models.Model):
     product_line_ids = fields.One2many(
         "request.product.line", "request_id", check_company=True
     )
-
     has_date = fields.Selection(related="category_id.has_date")
     has_period = fields.Selection(related="category_id.has_period")
     has_quantity = fields.Selection(related="category_id.has_quantity")
@@ -91,8 +91,8 @@ class RequestRequest(models.Model):
     has_product = fields.Selection(related="category_id.has_product")
     has_document = fields.Selection(related="category_id.has_document")
     # request_minimum = fields.Integer(related="category_id.request_minimum")
-    server_action_ids = fields.Many2many(
-        related="category_id.server_action_ids"
+    approved_action_id = fields.Many2one(
+        related="category_id.approved_action_id"
     )
     is_manager_approver = fields.Boolean(
         related="category_id.is_manager_approver"
@@ -133,6 +133,13 @@ class RequestRequest(models.Model):
         for request in self:
             request.attachment_number = attachment.get(request.id, 0)
 
+    @api.onchange("category_id")
+    def _onchange_category_id_set_defaults(self):
+        if self.category_id.automated_sequence:
+            self.name = self.category_id.sequence_id.next_by_id()
+        else:
+            self.name = self.category_id.name
+
     def action_get_attachment_view(self):
         self.ensure_one()
         res = self.env["ir.actions.act_window"]._for_xml_id(
@@ -165,19 +172,42 @@ class RequestRequest(models.Model):
             raise UserError(_("You are not the approver of this request"))
         self.write({"state": "approved"})
         # Server Action
-        self.execute_server_action()
+        for rec in self:
+            rec.category_id.approved_action_id.with_context(
+                active_model=rec._name,
+                active_id=rec.id,
+                request_action_approve=True,
+            ).sudo().run()
 
     def action_refuse(self, approver=None):
         self.write({"state": "refused"})
+        # Server Action
+        for rec in self:
+            rec.category_id.refused_action_id.with_context(
+                active_model=rec._name,
+                active_id=rec.id,
+            ).sudo().run()
 
     def action_withdraw(self, approver=None):
         self.write({"state": "pending"})
 
     def action_draft(self):
-        self.write({"state": "new"})
+        self.write({"state": "draft"})
+        # Server Action
+        for rec in self:
+            rec.category_id.draft_action_id.with_context(
+                active_model=rec._name,
+                active_id=rec.id,
+            ).sudo().run()
 
     def action_cancel(self):
         self.write({"state": "cancel"})
+        # Server Action
+        for rec in self:
+            rec.category_id.cancel_action_id.with_context(
+                active_model=rec._name,
+                active_id=rec.id,
+            ).sudo().run()
 
     @api.onchange("category_id", "requested_by")
     def _onchange_category_id(self):
@@ -189,6 +219,7 @@ class RequestRequest(models.Model):
 
     def execute_server_action(self):
         for rec in self:
-            for server_action in rec.category_id.server_action_ids:
-                ctx = {"active_model": rec._name, "active_id": rec.id}
-                server_action.with_context(ctx).run()
+            rec.category_id.approved_action_id.with_context(
+                active_model=rec._name,
+                active_id=rec.id,
+            ).sudo().run()

@@ -6,13 +6,16 @@
             type="base64"
             file="requests_purchase_request/static/src/img/purchase_request.png"
         />
-        <field name="sequence">100</field>
-        <field name="use_purchase_request" eval="True" />
         <field
-            name="purchase_request_action_id"
-            ref="requests_purchase_request.server_action_create_purchase_request"
+            name="approved_action_id"
+            ref="action_request_purchase_request_approved_actions"
         />
+        <field name="sequence">100</field>
+        <field name="use_pr" eval="True" />
         <field name="automated_sequence" eval="True" />
         <field name="sequence_code">RQPR</field>
+        <field name="has_date">optional</field>
+        <field name="has_product">optional</field>
+        <field name="has_quantity">optional</field>
     </record>
 </odoo>

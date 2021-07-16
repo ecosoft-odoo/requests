@@ -1,18 +1,19 @@
-# Part of Odoo. See LICENSE file for full copyright and licensing details.
+# Copyright 2021 Ecosoft
+# License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
 {
-    "name": "Requests -> Employee Report",
+    "name": "Requests for Expense",
     "version": "14.0.1.0.0",
-    "category": "Human Resources/Requests",
+    "category": "Tools",
     "website": "https://github.com/OCA/requests",
     "summary": """
         This module adds to the requests workflow the possibility to generate
-        Employee Expense Report from an Requests.
+        Expense Sheet from an Requests for Expense.
     """,
     "author": "Ecosoft, Odoo Community Association (OCA)",
     "license": "AGPL-3",
     "depends": ["requests", "hr_expense"],
     "data": [
-        "data/ir_actions_server.xml",
+        "data/server_actions.xml",
         "data/request_category_data.xml",
         "views/request_views.xml",
         "views/request_category_views.xml",

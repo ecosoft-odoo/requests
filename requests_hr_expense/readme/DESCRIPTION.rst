@@ -1,1 +1,1 @@
-This module create a new Reqeuest Type "Employee Expense
+This module create a new Request Type "Expnese"

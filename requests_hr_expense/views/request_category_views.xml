@@ -5,10 +5,11 @@
         <field name="inherit_id" ref="requests.request_category_view_form" />
         <field name="arch" type="xml">
             <page name="options" position="after">
-                <page string="Expense Options" name="expense_options">
+                <page string="Create EX Option" name="ex_option">
                     <group>
-                        <field name="use_expense" />
-                        <field name="expense_action_id" />
+                        <field name="use_ex" />
+                        <field name="ex_approved_action_id" />
+                        <field name="ex_rejected_action_id" />
                     </group>
                 </page>
             </page>

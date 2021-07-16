@@ -1,0 +1,16 @@
+<odoo>
+    <!-- Server actions for Spendings -->
+    <record id="action_request_spending_approved_actions" model="ir.actions.server">
+        <field name="name">Request Type - Advance: Approve Documents</field>
+        <field name="model_id" ref="requests.model_request_request" />
+        <field name="state">code</field>
+        <field
+            name="child_ids"
+            eval="[(6, 0, [
+            ref('requests_hr_advance.action_request_advance_approved_actions'),
+            ref('requests_hr_expense.action_request_expense_approved_actions'),
+            ref('requests_purchase_request.action_request_purchase_request_approved_actions'),
+        ])]"
+        />
+    </record>
+</odoo>

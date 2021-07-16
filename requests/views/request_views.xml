@@ -80,7 +80,7 @@
                         name="action_confirm"
                         string="Submit"
                         type="object"
-                        attrs="{'invisible':[('state','!=','new')]}"
+                        attrs="{'invisible':[('state','!=','draft')]}"
                         class="btn-primary"
                     />
                     <button
@@ -99,7 +99,7 @@
                         name="action_withdraw"
                         string="Withdraw"
                         type="object"
-                        attrs="{'invisible':[('state','in',['new','pending','cancel'])]}"
+                        attrs="{'invisible':[('state','in',['draft','pending','cancel'])]}"
                     />
                     <button
                         name="action_draft"
@@ -111,7 +111,7 @@
                         name="action_cancel"
                         string="Cancel"
                         type="object"
-                        attrs="{'invisible':['|',('state','in',['new','cancel']),('has_access_to_request','==',False)]}"
+                        attrs="{'invisible':['|',('state','in',['draft','cancel']),('has_access_to_request','==',False)]}"
                     />
                     <widget
                         name="attach_document"
@@ -129,7 +129,7 @@
                     <field
                         name="state"
                         widget="statusbar"
-                        statusbar_visible="new,pending,approved"
+                        statusbar_visible="draft,pending,approved"
                     />
                 </header>
                 <sheet>
@@ -168,8 +168,9 @@
                             <field
                                 name="name"
                                 placeholder="E.g: Expenses Paris business trip"
-                                attrs="{'readonly': ['|', ('state','!=','new'), ('automated_sequence', '=', True)]}"
+                                attrs="{'readonly': ['|', ('state','!=','draft'), ('automated_sequence', '=', True)]}"
                                 required="1"
+                                force_save="1"
                             />
                         </h1>
                     </div>
@@ -178,20 +179,20 @@
                             <field
                                 name="category_id"
                                 groups="requests.group_request_user"
-                                attrs="{'readonly':[('state','!=','new')]}"
+                                readonly="1"
                                 force_save="1"
                             />
                             <field
                                 name="requested_by"
                                 groups="requests.group_request_user"
                                 domain="[('share', '=', False)]"
-                                attrs="{'readonly':[('state','!=','new')]}"
+                                attrs="{'readonly':[('state','!=','draft')]}"
                             />
                             <field
                                 name="approver_id"
                                 groups="requests.group_request_user"
                                 domain="[('share', '=', False)]"
-                                attrs="{'invisible': [('use_approver','=',False)],'required': [('use_approver','=',True)], 'readonly':[('state','!=','new')]}"
+                                attrs="{'invisible': [('use_approver','=',False)],'required': [('use_approver','=',True)], 'readonly':[('state','!=','draft')]}"
                             />
                             <field
                                 name="date_confirmed"
@@ -208,7 +209,7 @@
                                     <field
                                         name="date"
                                         class="oe_inline"
-                                        attrs="{'required': [('has_date','==','required')], 'readonly': [('state','!=','new')]}"
+                                        attrs="{'required': [('has_date','==','required')], 'readonly': [('state','!=','draft')]}"
                                     />
                                 </div>
                             </div>
@@ -222,24 +223,24 @@
                                   <span>From: </span><field
                                         name="date_start"
                                         class="oe_inline"
-                                        attrs="{'required': [('has_period','==','required')], 'readonly': [('state','!=','new')]}"
+                                        attrs="{'required': [('has_period','==','required')], 'readonly': [('state','!=','draft')]}"
                                     />
                                 </div>
                                 <div>
                                   <span>to: </span><field
                                         name="date_end"
                                         class="oe_inline"
-                                        attrs="{'required': [('has_period','==','required')], 'readonly': [('state','!=','new')]}"
+                                        attrs="{'required': [('has_period','==','required')], 'readonly': [('state','!=','draft')]}"
                                     />
                                 </div>
                             </div>
                             <field
                                 name="location"
-                                attrs="{'invisible':[('has_location','==','no')], 'required': [('has_location','==','required')], 'readonly': [('state','!=','new')]}"
+                                attrs="{'invisible':[('has_location','==','no')], 'required': [('has_location','==','required')], 'readonly': [('state','!=','draft')]}"
                             />
                             <field
                                 name="partner_id"
-                                attrs="{'invisible':[('has_partner','==','no')], 'required': [('has_partner','==','required')], 'readonly': [('state','!=','new')]}"
+                                attrs="{'invisible':[('has_partner','==','no')], 'required': [('has_partner','==','required')], 'readonly': [('state','!=','draft')]}"
                             />
                         </group>
                         <group name="request_details">
@@ -248,12 +249,12 @@
                                 attrs="{
                                     'invisible':['|', ('has_quantity', '=', 'no'), ('has_product', '!=', 'no')],
                                     'required': [('has_quantity','=','required'), ('has_product', '=', 'no')],
-                                    'readonly':[('state','!=','new')],
+                                    'readonly':[('state','!=','draft')],
                                 }"
                             />
                             <field
                                 name="amount"
-                                attrs="{'invisible':[('has_amount','==','no')], 'required': [('has_amount','==','required')], 'readonly':[('state','!=','new')]}"
+                                attrs="{'invisible':[('has_amount','==','no')], 'required': [('has_amount','==','required')], 'readonly':[('state','!=','draft')]}"
                             />
                             <field
                                 name="reference"
@@ -271,14 +272,23 @@
                             <field
                                 name="product_line_ids"
                                 context="{'tree_view_ref': 'requests.request_product_line_view_tree'}"
-                                attrs="{'readonly':[('state','!=','new')]}"
+                                attrs="{'readonly':[('state','!=','draft')]}"
                             />
                         </page>
                         <page string="Description" name="description">
                             <field
                                 name="reason"
-                                attrs="{'readonly':[('state','!=','new')]}"
+                                attrs="{'readonly':[('state','!=','draft')]}"
                             />
+                        </page>
+                        <page
+                            string="Child Documents"
+                            name="children"
+                            attrs="{'invisible': [('has_child', '=', False)]}"
+                        >
+                            <group name="children" colspan="4">
+                                <field name="has_child" invisible="1" />
+                            </group>
                         </page>
                     </notebook>
                 </sheet>
@@ -359,7 +369,7 @@
                                     <a
                                         name="action_withdraw"
                                         type="object"
-                                        attrs="{'invisible':[('state','in',['new', 'pending','cancel'])]}"
+                                        attrs="{'invisible':[('state','in',['draft', 'pending','cancel'])]}"
                                         role="menuitem"
                                         class="dropdown-item"
                                     >Withdraw</a>

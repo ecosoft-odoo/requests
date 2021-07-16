@@ -5,10 +5,11 @@
         <field name="inherit_id" ref="requests.request_category_view_form" />
         <field name="arch" type="xml">
             <page name="options" position="after">
-                <page string="Purchase Request Options" name="purchase_request_options">
+                <page string="Create PR Option" name="pr_option">
                     <group>
-                        <field name="use_purchase_request" />
-                        <field name="purchase_request_action_id" />
+                        <field name="use_pr" />
+                        <field name="pr_approved_action_id" />
+                        <field name="pr_rejected_action_id" />
                     </group>
                 </page>
             </page>

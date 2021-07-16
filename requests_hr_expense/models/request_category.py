@@ -7,17 +7,29 @@ from odoo import fields, models
 class RequestCategory(models.Model):
     _inherit = "request.category"
 
-    use_expense = fields.Boolean(
+    use_ex = fields.Boolean(
         string="Use Expense",
-        help="If checked, request document will show new create/view expense sheet, "
-        "user can create new expense sheet which is considered part of this request",
+        help="If checked, request document will show new create/view expense, "
+        "user can create new hr_expense_sheet which is considered part of this request",
     )
-    expense_action_id = fields.Many2one(
+    ex_approved_action_id = fields.Many2one(
         comodel_name="ir.actions.server",
-        string="On Create EX",
+        string="EX Approved Action",
         domain=[
             ("usage", "=", "ir_actions_server"),
             ("model_id.model", "=", "request.request"),
         ],
-        help="This server action is trigger on click button Create Expense",
+        help="This server action is trigger after EX is approved",
     )
+    ex_rejected_action_id = fields.Many2one(
+        comodel_name="ir.actions.server",
+        string="EX Rejected Action",
+        domain=[
+            ("usage", "=", "ir_actions_server"),
+            ("model_id.model", "=", "request.request"),
+        ],
+        help="This server action is trigger after EX is rejected",
+    )
+
+    def _has_child(self):
+        return super()._has_child() or self.use_ex

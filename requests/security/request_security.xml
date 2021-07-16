@@ -2,17 +2,14 @@
 <!-- Copyright 2021 Ecosoft
      License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl). -->
 <odoo>
-    <record
-        model="ir.module.category"
-        id="base.module_category_human_resources_requests"
-    >
-        <field name="description">Helps you manage your requests.</field>
+    <record model="ir.module.category" id="module_category_human_resources_requests">
+        <field name="name">Helps you manage your requests.</field>
         <field name="sequence">9</field>
     </record>
 
     <record id="group_request_user" model="res.groups">
         <field name="name">Approver</field>
-        <field name="category_id" ref="base.module_category_human_resources_requests" />
+        <field name="category_id" ref="module_category_human_resources_requests" />
         <field name="implied_ids" eval="[(6, 0, [ref('base.group_user')])]" />
         <field
             name="comment"
@@ -24,7 +21,7 @@
         <field
             name="comment"
         >The user will have access to the requests configuration.</field>
-        <field name="category_id" ref="base.module_category_human_resources_requests" />
+        <field name="category_id" ref="module_category_human_resources_requests" />
         <field name="implied_ids" eval="[(4, ref('group_request_user'))]" />
     </record>
 

@@ -7,17 +7,29 @@ from odoo import fields, models
 class RequestCategory(models.Model):
     _inherit = "request.category"
 
-    use_purchase_request = fields.Boolean(
+    use_pr = fields.Boolean(
         string="Use Purchase Request",
         help="If checked, request document will show new create/view purchase request, "
         "user can create new purchase_request which is considered part of this request",
     )
-    purchase_request_action_id = fields.Many2one(
+    pr_approved_action_id = fields.Many2one(
         comodel_name="ir.actions.server",
-        string="On Create PR",
+        string="PR Approved Action",
         domain=[
             ("usage", "=", "ir_actions_server"),
             ("model_id.model", "=", "request.request"),
         ],
-        help="This server action is trigger on click button Create Purchase Request",
+        help="This server action is trigger after PR is approved",
     )
+    pr_rejected_action_id = fields.Many2one(
+        comodel_name="ir.actions.server",
+        string="PR Rejected Action",
+        domain=[
+            ("usage", "=", "ir_actions_server"),
+            ("model_id.model", "=", "request.request"),
+        ],
+        help="This server action is trigger after PR is rejected",
+    )
+
+    def _has_child(self):
+        return super()._has_child() or self.use_pr

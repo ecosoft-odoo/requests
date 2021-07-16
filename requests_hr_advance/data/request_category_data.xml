@@ -1,0 +1,19 @@
+<odoo noupdate="1">
+    <record id="request_category_data_hr_advance" model="request.category">
+        <field name="name">Employee Advance</field>
+        <field
+            name="image"
+            type="base64"
+            file="requests_hr_advance/static/src/img/advance.png"
+        />
+        <field
+            name="approved_action_id"
+            ref="action_request_advance_approved_actions"
+        />
+        <field name="sequence">100</field>
+        <field name="use_av" eval="True" />
+        <field name="automated_sequence" eval="True" />
+        <field name="sequence_code">RQAV</field>
+        <field name="has_amount">required</field>
+    </record>
+</odoo>
