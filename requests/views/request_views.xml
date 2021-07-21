@@ -37,11 +37,19 @@
         <field name="model">request.request</field>
         <field name="priority">10</field>
         <field name="arch" type="xml">
-            <tree create="false" sample="1">
+            <tree create="false" sample="1" expand="1">
                 <field name="name" />
-                <field name="requested_by" />
+                <field name="requested_by" widget="many2one_avatar_user" />
                 <field name="category_id" />
-                <field name="state" />
+                <field
+                    name="state"
+                    widget="badge"
+                    decoration-primary="state == 'draft'"
+                    decoration-warning="state == 'pending'"
+                    decoration-success="state == 'approved'"
+                    decoration-info="state == 'cancel'"
+                    decoration-danger="state == 'refused'"
+                />
             </tree>
         </field>
     </record>
@@ -63,6 +71,23 @@
                     name="filter_requests_to_review"
                     domain="[('approver_id', '=', uid), ('state', '=', 'pending')]"
                 />
+                <group string="Group By">
+                    <filter
+                        name="group_by_category"
+                        string="Category"
+                        context="{'group_by':'category_id'}"
+                    />
+                    <filter
+                        name="group_by_requested_by"
+                        string="Request Owner"
+                        context="{'group_by':'requested_by'}"
+                    />
+                    <filter
+                        name="group_by_state"
+                        string="Status"
+                        context="{'group_by':'state'}"
+                    />
+                </group>
             </search>
         </field>
     </record>
@@ -187,12 +212,14 @@
                                 groups="requests.group_request_user"
                                 domain="[('share', '=', False)]"
                                 attrs="{'readonly':[('state','!=','draft')]}"
+                                widget="many2one_avatar_user"
                             />
                             <field
                                 name="approver_id"
                                 groups="requests.group_request_user"
                                 domain="[('share', '=', False)]"
                                 attrs="{'invisible': [('use_approver','=',False)],'required': [('use_approver','=',True)], 'readonly':[('state','!=','draft')]}"
+                                widget="many2one_avatar_user"
                             />
                             <field
                                 name="date_confirmed"
@@ -308,6 +335,7 @@
         <field name="arch" type="xml">
             <kanban
                 create="false"
+                disable_drag_drop_record="true"
                 class="o_modules_kanban"
                 default_group_by="state"
                 default_order="create_date desc"
@@ -317,7 +345,7 @@
                 sample="1"
             >
                 <field name="requested_by" />
-                <field name="state" />
+                <field name="state" readonly="1" />
                 <field name="name" />
                 <field name="activity_ids" />
                 <field name="category_id" readonly="1" />
@@ -376,6 +404,11 @@
                                 </div>
                             </div>
                             <div class="oe_kanban_content">
+                                <t t-if="record.state.raw_value == 'draft'">
+                                    <span
+                                        class="badge badge-pill float-right badge-primary mt4 mr16"
+                                    ><t t-esc="record.state.value" /></span>
+                                </t>
                                 <t t-if="record.state.raw_value == 'pending'">
                                     <span
                                         class="badge badge-pill float-right badge-warning mt4 mr16"
@@ -384,6 +417,11 @@
                                 <t t-if="record.state.raw_value == 'approved'">
                                     <span
                                         class="badge badge-pill float-right badge-success mt4 mr16"
+                                    ><t t-esc="record.state.value" /></span>
+                                </t>
+                                <t t-if="record.state.raw_value == 'cancel'">
+                                    <span
+                                        class="badge badge-pill float-right badge-info mt4 mr16"
                                     ><t t-esc="record.state.value" /></span>
                                 </t>
                                 <t t-if="record.state.raw_value == 'refused'">
