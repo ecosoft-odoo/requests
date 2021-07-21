@@ -1,24 +1,21 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<!-- Copyright 2021 Ecosoft
-     License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl). -->
-<odoo>
-    <data noupdate="1">
-        <record id="request_category_data_hr_expense" model="request.category">
-            <field name="name">Employee Expense</field>
-            <field
-                name="server_action_ids"
-                eval="[(4, ref('requests_hr_expense.server_action_create_hr_expense'))]"
-            />
-            <field
-                name="image"
-                type="base64"
-                file="requests_purchase_request/static/src/img/shopping-cart-po-solid.svg"
-            />
-            <field name="sequence">100</field>
-            <field name="has_product">required</field>
-            <field name="has_quantity">required</field>
-            <field name="automated_sequence" eval="True" />
-            <field name="sequence_code">RQEX</field>
-        </record>
-    </data>
+<odoo noupdate="1">
+    <record id="request_category_data_hr_expense" model="request.category">
+        <field name="name">Employee Expense</field>
+        <field
+            name="image"
+            type="base64"
+            file="requests_hr_expense/static/src/img/expense.png"
+        />
+        <field
+            name="approved_action_id"
+            ref="action_request_expense_approved_actions"
+        />
+        <field name="sequence">100</field>
+        <field name="use_ex" eval="True" />
+        <field name="automated_sequence" eval="True" />
+        <field name="sequence_code">RQEX</field>
+        <field name="has_date">optional</field>
+        <field name="has_product">optional</field>
+        <field name="has_quantity">optional</field>
+    </record>
 </odoo>

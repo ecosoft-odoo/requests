@@ -5,7 +5,7 @@
     "summary": "Extends the functionality of Requests to "
     "support a tier validation process.",
     "version": "14.0.1.0.0",
-    "category": "Purchase Management",
+    "category": "Tools",
     "website": "https://github.com/OCA/requests",
     "author": "Ecosoft, Odoo Community Association (OCA)",
     "license": "AGPL-3",

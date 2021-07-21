@@ -13,7 +13,7 @@ def uninstall_hook(cr, registry):
             action.write(
                 {
                     "context": "{}",
-                    "domain": "[('approver_ids.user_id','=',uid),"
+                    "domain": "[('approver_id','=',uid),"
                     "('state','=','pending')]",
                 }
             )

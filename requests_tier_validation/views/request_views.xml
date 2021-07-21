@@ -5,7 +5,7 @@
     <record id="view_request_request_filter" model="ir.ui.view">
         <field name="name">request.request.select - requests_tier_validation</field>
         <field name="model">request.request</field>
-        <field name="inherit_id" ref="requests.request_search_view_search" />
+        <field name="inherit_id" ref="requests.request_request_view_search" />
         <field name="arch" type="xml">
             <filter name="filter_requests_to_review" position="attributes">
                 <attribute
@@ -39,13 +39,13 @@
             <a name="action_withdraw" position="attributes">
                 <attribute name="invisible">True</attribute>
             </a>
-            <t t-if="record.user_status.raw_value == 'pending'" position="attributes">
+            <t t-if="record.state.raw_value == 'pending'" position="attributes">
                 <attribute name="invisible">True</attribute>
             </t>
-            <t t-if="record.user_status.raw_value == 'approved'" position="attributes">
+            <t t-if="record.state.raw_value == 'approved'" position="attributes">
                 <attribute name="invisible">True</attribute>
             </t>
-            <t t-if="record.user_status.raw_value == 'refused'" position="attributes">
+            <t t-if="record.state.raw_value == 'refused'" position="attributes">
                 <attribute name="invisible">True</attribute>
             </t>
             <!-- add new stuff -->
@@ -70,7 +70,7 @@
                     class="dropdown-item"
                 >Reject</a>
             </a>
-            <t t-if="record.user_status.raw_value == 'refused'" position="after">
+            <t t-if="record.state.raw_value == 'refused'" position="after">
                 <t t-if="record.can_review.raw_value">
                     <span
                         class="badge badge-pill float-right badge-warning mt4 mr16"

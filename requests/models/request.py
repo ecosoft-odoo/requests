@@ -14,20 +14,20 @@ class RequestRequest(models.Model):
     _check_company_auto = True
 
     @api.model
-    def _read_group_state(self, stages, domain, order):
-        state_list = dict(self._fields["state"].selection).keys()
-        return state_list
+    def _read_group_state(self, states, domain, order):
+        return dict(self._fields["state"].selection).keys()
 
     name = fields.Char(string="Request Subject", tracking=True)
     category_id = fields.Many2one(
         "request.category", string="Category", required=True
     )
     use_approver = fields.Boolean(related="category_id.use_approver")
-    approver_ids = fields.One2many(
-        "request.approver",
-        "request_id",
-        string="Approvers",
+    has_child = fields.Boolean(related="category_id.has_child")
+    approver_id = fields.Many2one(
+        comodel_name="res.users",
+        string="Approver",
         check_company=True,
+        domain="[('id', '!=', requested_by)]",
     )
     company_id = fields.Many2one(
         string="Company",
@@ -50,33 +50,23 @@ class RequestRequest(models.Model):
     reason = fields.Text(string="Description")
     state = fields.Selection(
         [
-            ("new", "To Submit"),
+            ("draft", "To Submit"),
             ("pending", "Submitted"),
             ("approved", "Approved"),
             ("refused", "Refused"),
             ("cancel", "Cancel"),
         ],
-        default="new",
-        compute="_compute_state",
-        store=True,
+        default="draft",
         tracking=True,
         group_expand="_read_group_state",
     )
-    request_owner_id = fields.Many2one(
+    requested_by = fields.Many2one(
         "res.users",
         string="Request Owner",
+        required=True,
         check_company=True,
         domain="[('company_ids', 'in', company_id)]",
-    )
-    user_status = fields.Selection(
-        [
-            ("new", "New"),
-            ("pending", "To Approve"),
-            ("approved", "Approved"),
-            ("refused", "Refused"),
-            ("cancel", "Cancel"),
-        ],
-        compute="_compute_user_status",
+        default=lambda self: self.env.user,
     )
     has_access_to_request = fields.Boolean(
         string="Has Access To Request",
@@ -88,7 +78,6 @@ class RequestRequest(models.Model):
     product_line_ids = fields.One2many(
         "request.product.line", "request_id", check_company=True
     )
-
     has_date = fields.Selection(related="category_id.has_date")
     has_period = fields.Selection(related="category_id.has_period")
     has_quantity = fields.Selection(related="category_id.has_quantity")
@@ -100,12 +89,10 @@ class RequestRequest(models.Model):
     )
     has_location = fields.Selection(related="category_id.has_location")
     has_product = fields.Selection(related="category_id.has_product")
-    requirer_document = fields.Selection(
-        related="category_id.requirer_document"
-    )
-    request_minimum = fields.Integer(related="category_id.request_minimum")
-    server_action_ids = fields.Many2many(
-        related="category_id.server_action_ids"
+    has_document = fields.Selection(related="category_id.has_document")
+    # request_minimum = fields.Integer(related="category_id.request_minimum")
+    approved_action_id = fields.Many2one(
+        related="category_id.approved_action_id"
     )
     is_manager_approver = fields.Boolean(
         related="category_id.is_manager_approver"
@@ -129,7 +116,7 @@ class RequestRequest(models.Model):
         )
         for request in self:
             request.has_access_to_request = (
-                request.request_owner_id == self.env.user and is_request_user
+                request.requested_by == self.env.user and is_request_user
             )
 
     def _compute_attachment_number(self):
@@ -145,6 +132,13 @@ class RequestRequest(models.Model):
         }
         for request in self:
             request.attachment_number = attachment.get(request.id, 0)
+
+    @api.onchange("category_id")
+    def _onchange_category_id_set_defaults(self):
+        if self.category_id.automated_sequence:
+            self.name = self.category_id.sequence_id.next_by_id()
+        else:
+            self.name = self.category_id.name
 
     def action_get_attachment_view(self):
         self.ensure_one()
@@ -163,190 +157,69 @@ class RequestRequest(models.Model):
 
     def action_confirm(self):
         self.ensure_one()
-
-        if self.use_approver:
-            if len(self.approver_ids) < self.request_minimum:
-                raise UserError(
-                    _(
-                        "You have to add at least %s approvers "
-                        "to confirm your request.",
-                        self.request_minimum,
-                    )
-                )
-            approvers = self.mapped("approver_ids").filtered(
-                lambda approver: approver.status == "new"
+        if self.use_approver and not self.approver_id:
+            raise UserError(
+                _("You have to select approver to confirm your request")
             )
-            approvers._create_activity()
-            approvers.write({"status": "pending"})
-
-        if self.requirer_document == "required" and not self.attachment_number:
-            raise UserError(_("You have to attach at lease one document."))
-        self.write({"date_confirmed": fields.Datetime.now()})
-
-    def _get_user_request_activities(self, user):
-        domain = [
-            ("res_model", "=", "request.request"),
-            ("res_id", "in", self.ids),
-            (
-                "activity_type_id",
-                "=",
-                self.env.ref("requests.mail_activity_data_request").id,
-            ),
-            ("user_id", "=", user.id),
-        ]
-        activities = self.env["mail.activity"].search(domain)
-        return activities
+        if self.has_document == "required" and not self.attachment_number:
+            raise UserError(_("You have to attach at least one document."))
+        self.write(
+            {"date_confirmed": fields.Datetime.now(), "state": "pending"}
+        )
 
     def action_approve(self, approver=None):
-        if not isinstance(approver, models.BaseModel):
-            approver = self.mapped("approver_ids").filtered(
-                lambda approver: approver.user_id == self.env.user
-            )
-        approver.write({"status": "approved"})
-        self.sudo()._get_user_request_activities(
-            user=self.env.user
-        ).action_feedback()
+        if self.approver_id and self.approver_id != self.env.user:
+            raise UserError(_("You are not the approver of this request"))
+        self.write({"state": "approved"})
         # Server Action
-        self.execute_server_action()
+        for rec in self:
+            rec.category_id.approved_action_id.with_context(
+                active_model=rec._name,
+                active_id=rec.id,
+                request_action_approve=True,
+            ).sudo().run()
 
     def action_refuse(self, approver=None):
-        if not isinstance(approver, models.BaseModel):
-            approver = self.mapped("approver_ids").filtered(
-                lambda approver: approver.user_id == self.env.user
-            )
-        approver.write({"status": "refused"})
-        self.sudo()._get_user_request_activities(
-            user=self.env.user
-        ).action_feedback()
+        self.write({"state": "refused"})
+        # Server Action
+        for rec in self:
+            rec.category_id.refused_action_id.with_context(
+                active_model=rec._name,
+                active_id=rec.id,
+            ).sudo().run()
 
     def action_withdraw(self, approver=None):
-        if not isinstance(approver, models.BaseModel):
-            approver = self.mapped("approver_ids").filtered(
-                lambda approver: approver.user_id == self.env.user
-            )
-        approver.write({"status": "pending"})
+        self.write({"state": "pending"})
 
     def action_draft(self):
-        self.mapped("approver_ids").write({"status": "new"})
+        self.write({"state": "draft"})
+        # Server Action
+        for rec in self:
+            rec.category_id.draft_action_id.with_context(
+                active_model=rec._name,
+                active_id=rec.id,
+            ).sudo().run()
 
     def action_cancel(self):
-        self.sudo()._get_user_request_activities(user=self.env.user).unlink()
-        self.mapped("approver_ids").write({"status": "cancel"})
+        self.write({"state": "cancel"})
+        # Server Action
+        for rec in self:
+            rec.category_id.cancel_action_id.with_context(
+                active_model=rec._name,
+                active_id=rec.id,
+            ).sudo().run()
 
-    @api.depends("approver_ids.status")
-    def _compute_user_status(self):
-        for request in self:
-            request.user_status = request.approver_ids.filtered(
-                lambda approver: approver.user_id == self.env.user
-            ).status
-
-    @api.depends("approver_ids.status")
-    def _compute_state(self):
-        for request in self:
-            status_lst = request.mapped("approver_ids.status")
-            minimal_approver = (
-                request.request_minimum
-                if len(status_lst) >= request.request_minimum
-                else len(status_lst)
-            )
-            if status_lst:
-                if status_lst.count("cancel"):
-                    status = "cancel"
-                elif status_lst.count("refused"):
-                    status = "refused"
-                elif status_lst.count("new"):
-                    status = "new"
-                elif status_lst.count("approved") >= minimal_approver:
-                    status = "approved"
-                else:
-                    status = "pending"
-            else:
-                status = "new"
-            request.state = status
-
-    @api.onchange("category_id", "request_owner_id")
+    @api.onchange("category_id", "requested_by")
     def _onchange_category_id(self):
-        current_users = self.approver_ids.mapped("user_id")
-        new_users = self.category_id.user_ids
         if self.category_id.is_manager_approver:
             employee = self.env["hr.employee"].search(
-                [("user_id", "=", self.request_owner_id.id)], limit=1
+                [("user_id", "=", self.requested_by.id)], limit=1
             )
-            if employee.parent_id.user_id:
-                new_users |= employee.parent_id.user_id
-        for user in new_users - current_users:
-            self.approver_ids += self.env["request.approver"].new(
-                {"user_id": user.id, "request_id": self.id, "status": "new"}
-            )
+            self.approver_id = employee.parent_id.user_id
 
     def execute_server_action(self):
         for rec in self:
-            for server_action in rec.category_id.server_action_ids:
-                ctx = {"active_model": rec._name, "active_id": rec.id}
-                server_action.with_context(ctx).run()
-
-
-class RequestApprover(models.Model):
-    _name = "request.approver"
-    _description = "Approver"
-
-    _check_company_auto = True
-
-    user_id = fields.Many2one(
-        "res.users",
-        string="User",
-        required=True,
-        check_company=True,
-        domain="[('id', 'not in', existing_request_user_ids)]",
-    )
-    existing_request_user_ids = fields.Many2many(
-        "res.users", compute="_compute_existing_request_user_ids"
-    )
-    status = fields.Selection(
-        [
-            ("new", "New"),
-            ("pending", "To Approve"),
-            ("approved", "Approved"),
-            ("refused", "Refused"),
-            ("cancel", "Cancel"),
-        ],
-        string="Status",
-        default="new",
-        readonly=True,
-    )
-    request_id = fields.Many2one(
-        "request.request",
-        string="Request",
-        ondelete="cascade",
-        check_company=True,
-    )
-    company_id = fields.Many2one(
-        string="Company",
-        related="request_id.company_id",
-        store=True,
-        readonly=True,
-        index=True,
-    )
-
-    def action_approve(self):
-        self.request_id.action_approve(self)
-
-    def action_refuse(self):
-        self.request_id.action_refuse(self)
-
-    def _create_activity(self):
-        for approver in self:
-            approver.request_id.activity_schedule(
-                "requests.mail_activity_data_request",
-                user_id=approver.user_id.id,
-            )
-
-    @api.depends(
-        "request_id.request_owner_id", "request_id.approver_ids.user_id"
-    )
-    def _compute_existing_request_user_ids(self):
-        for approver in self:
-            approver.existing_request_user_ids = (
-                self.mapped("request_id.approver_ids.user_id")._origin
-                | self.request_id.request_owner_id._origin
-            )
+            rec.category_id.approved_action_id.with_context(
+                active_model=rec._name,
+                active_id=rec.id,
+            ).sudo().run()

@@ -1,19 +1,33 @@
-<?xml version="1.0" encoding="utf-8" ?>
-<!-- Copyright 2021 Ecosoft
-     License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl). -->
 <odoo>
+
     <record id="request_request_view_form" model="ir.ui.view">
         <field name="name">request.request.view.form</field>
         <field name="model">request.request</field>
         <field name="inherit_id" ref="requests.request_request_view_form" />
         <field name="arch" type="xml">
+            <xpath expr="//field[@name='has_access_to_request']" position="after">
+                <field name="use_pr" invisible="1" />
+                <button
+                    name="action_create_purchase_request"
+                    string="Create PR"
+                    type="object"
+                    attrs="{'invisible':['|','|',('use_pr','=',False),('state','!=','draft'),('purchase_request_count','=',0)]}"
+                />
+                <button
+                    name="action_create_purchase_request"
+                    string="Create PR"
+                    type="object"
+                    class="btn-primary"
+                    attrs="{'invisible':['|','|',('use_pr','=',False),('state','!=','draft'),('purchase_request_count','>',0)]}"
+                />
+            </xpath>
             <xpath expr="//button[@name='action_get_attachment_view']" position="after">
                 <button
-                    name="action_open_purchase_request"
+                    name="action_view_purchase_request"
                     type="object"
                     class="oe_stat_button"
                     icon="fa-shopping-cart"
-                    attrs="{'invisible': [('purchase_request_count', '=', 0)]}"
+                    attrs="{'invisible':[('use_pr','=',False)]}"
                 >
                     <field
                         name="purchase_request_count"
@@ -22,6 +36,35 @@
                     />
                 </button>
             </xpath>
+            <field name="has_child" position="after">
+                <group
+                    name="purchase_request"
+                    string="Purchase Requests"
+                    attrs="{'invisible': [('use_pr', '=', False)]}"
+                >
+                    <field
+                        name="purchase_request_ids"
+                        readonly="1"
+                        attrs="{'invisible': [('use_pr', '=', False)]}"
+                        nolabel="1"
+                        colspan="2"
+                    >
+                        <tree editable="bottom">
+                            <field name="name" string="Number" />
+                            <field name="date_start" string="Date" />
+                            <field name="estimated_cost" string="Amount" sum="Amount" />
+                            <field
+                                name="state"
+                                widget="badge"
+                                decoration-success="state in ('done', 'approved')"
+                                decoration-muted="state == 'draft'"
+                                decoration-warning="state == 'to_approve'"
+                                decoration-danger="state == 'rejected'"
+                            />
+                        </tree>
+                    </field>
+                </group>
+            </field>
         </field>
     </record>
 </odoo>

@@ -77,24 +77,15 @@ class RequestCategory(models.Model):
         required=True,
         help="Additional products that should be specified on the request.",
     )
-    requirer_document = fields.Selection(
-        [("required", "Required"), ("optional", "Optional")],
+    has_document = fields.Selection(
+        CATEGORY_SELECTION,
         string="Documents",
-        default="optional",
+        default="no",
         required=True,
-    )
-    request_minimum = fields.Integer(
-        string="Minimum Request", default="1", required=True
     )
     is_manager_approver = fields.Boolean(
         string="Employee's Manager",
         help="Automatically add the manager as approver on the request.",
-    )
-    user_ids = fields.Many2many(
-        "res.users",
-        string="Approvers",
-        check_company=True,
-        domain="[('company_ids', 'in', company_id)]",
     )
     request_to_validate_count = fields.Integer(
         "Number of requests to validate",
@@ -109,11 +100,50 @@ class RequestCategory(models.Model):
     sequence_id = fields.Many2one(
         "ir.sequence", "Reference Sequence", copy=False, check_company=True
     )
-    server_action_ids = fields.Many2many(
+    draft_action_id = fields.Many2one(
         comodel_name="ir.actions.server",
-        string="Post Approved Action",
-        domain=[("usage", "=", "ir_actions_server")],
+        string="Set to Draft Action",
+        domain=[
+            ("usage", "=", "ir_actions_server"),
+            ("model_id.model", "=", "request.request"),
+        ],
+        help="Server action that can get executed after the request is set to draft",
+    )
+    approved_action_id = fields.Many2one(
+        comodel_name="ir.actions.server",
+        string="After Approved Action",
+        domain=[
+            ("usage", "=", "ir_actions_server"),
+            ("model_id.model", "=", "request.request"),
+        ],
         help="Server action that can get executed after the request is approved",
+    )
+    pending_action_id = fields.Many2one(
+        comodel_name="ir.actions.server",
+        string="After Submitted Action",
+        domain=[
+            ("usage", "=", "ir_actions_server"),
+            ("model_id.model", "=", "request.request"),
+        ],
+        help="Server action that can get executed after the request is submitted",
+    )
+    refused_action_id = fields.Many2one(
+        comodel_name="ir.actions.server",
+        string="After Refused Action",
+        domain=[
+            ("usage", "=", "ir_actions_server"),
+            ("model_id.model", "=", "request.request"),
+        ],
+        help="Server action that can get executed after the request is refused",
+    )
+    cancel_action_id = fields.Many2one(
+        comodel_name="ir.actions.server",
+        string="After Cancelled Action",
+        domain=[
+            ("usage", "=", "ir_actions_server"),
+            ("model_id.model", "=", "request.request"),
+        ],
+        help="Server action that can get executed after the request is cancelled",
     )
     use_approver = fields.Boolean(compute="_compute_use_approver")
     context_overwrite = fields.Text(
@@ -122,8 +152,13 @@ Valid dictionary to overwrite default context on New Request,
 use env for self.env, i.e.,
 {"default_amount": 100000,
  "default_location": "G2 Building, Bangkok",
- "default_request_owner_id": env.user.id}
+ "default_requested_by": env.user.id}
         """
+    )
+    help = fields.Html(help="Explaination for a complex request operation.")
+    has_child = fields.Boolean(
+        compute="_compute_has_child",
+        help="Checked, if the module was extened to have child documents",
     )
 
     def _compute_use_approver(self):
@@ -132,7 +167,7 @@ use env for self.env, i.e.,
     def _compute_request_to_validate_count(self):
         domain = [
             ("state", "=", "pending"),
-            ("approver_ids.user_id", "=", self.env.user.id),
+            ("approver_id", "=", self.env.user.id),
         ]
         requests_data = self.env["request.request"].read_group(
             domain, ["category_id"], ["category_id"]
@@ -145,6 +180,14 @@ use env for self.env, i.e.,
             category.request_to_validate_count = requests_mapped_data.get(
                 category.id, 0
             )
+
+    def _compute_has_child(self):
+        for rec in self:
+            rec.has_child = rec._has_child()
+
+    def _has_child(self):
+        self.ensure_one()
+        return False
 
     @api.model
     def create(self, vals):
@@ -188,22 +231,13 @@ use env for self.env, i.e.,
 
     def create_request(self):
         self.ensure_one()
-        # If category uses sequence, set next sequence as name
-        # (if not, set category name as default name).
-        if self.automated_sequence:
-            name = self.sequence_id.next_by_id()
-        else:
-            name = self.name
         res = {
             "type": "ir.actions.act_window",
             "res_model": "request.request",
             "views": [[False, "form"]],
             "context": {
                 "form_view_initial_mode": "edit",
-                "default_name": name,
                 "default_category_id": self.id,
-                "default_request_owner_id": self.env.user.id,
-                "default_state": "new",
             },
         }
         overwrite_vals = self._get_overwrite_vals()
@@ -214,7 +248,7 @@ use env for self.env, i.e.,
         """valid_dict = {
             "default_amount": 10000,
             "default_location": "G2 Building, Bangkok",
-            "deafult_request_owner_id": env.user.id,
+            "deafult_requested_by": env.user.id,
         }
         """
         self.ensure_one()

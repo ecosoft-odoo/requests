@@ -2,17 +2,14 @@
 <!-- Copyright 2021 Ecosoft
      License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl). -->
 <odoo>
-    <record
-        model="ir.module.category"
-        id="base.module_category_human_resources_requests"
-    >
-        <field name="description">Helps you manage your requests.</field>
+    <record model="ir.module.category" id="module_category_human_resources_requests">
+        <field name="name">Helps you manage your requests.</field>
         <field name="sequence">9</field>
     </record>
 
     <record id="group_request_user" model="res.groups">
         <field name="name">Approver</field>
-        <field name="category_id" ref="base.module_category_human_resources_requests" />
+        <field name="category_id" ref="module_category_human_resources_requests" />
         <field name="implied_ids" eval="[(6, 0, [ref('base.group_user')])]" />
         <field
             name="comment"
@@ -24,7 +21,7 @@
         <field
             name="comment"
         >The user will have access to the requests configuration.</field>
-        <field name="category_id" ref="base.module_category_human_resources_requests" />
+        <field name="category_id" ref="module_category_human_resources_requests" />
         <field name="implied_ids" eval="[(4, ref('group_request_user'))]" />
     </record>
 
@@ -44,7 +41,7 @@
             <field name="perm_write" eval="1" />
             <field name="perm_create" eval="1" />
             <field name="perm_unlink" eval="0" />
-            <field name="domain_force">[('request_owner_id.id','=', user.id)]</field>
+            <field name="domain_force">[('requested_by.id','=', user.id)]</field>
         </record>
 
         <record id="request_unlink_request_owner_rule" model="ir.rule">
@@ -57,7 +54,7 @@
             <field name="perm_unlink" eval="1" />
             <field
                 name="domain_force"
-            >[('request_owner_id.id', '=', user.id), ('state','=','cancel')]</field>
+            >[('requested_by.id', '=', user.id), ('state','=','cancel')]</field>
         </record>
 
         <record id="request_approvers_rule" model="ir.rule">
@@ -68,9 +65,7 @@
             <field name="perm_write" eval="0" />
             <field name="perm_create" eval="0" />
             <field name="perm_unlink" eval="0" />
-            <field
-                name="domain_force"
-            >[('approver_ids.user_id.id','=', user.id)]</field>
+            <field name="domain_force">[('approver_id','=', user.id)]</field>
         </record>
 
         <record id="request_user" model="ir.rule">
@@ -110,15 +105,6 @@
             <field
                 name="model_id"
                 search="[('model','=','request.category')]"
-                model="ir.model"
-            />
-            <field name="domain_force">[('company_id', 'in', company_ids)]</field>
-        </record>
-        <record id="request_approver_rule" model="ir.rule">
-            <field name="name">request_approver multi-company</field>
-            <field
-                name="model_id"
-                search="[('model','=','request.approver')]"
                 model="ir.model"
             />
             <field name="domain_force">[('company_id', 'in', company_ids)]</field>

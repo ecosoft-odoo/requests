@@ -1,77 +1,68 @@
 # Copyright 2021 Ecosoft
 # License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl).
-
-from odoo import _, api, fields, models
+from odoo import _, fields, models
 
 
 class RequestRequest(models.Model):
     _inherit = "request.request"
 
+    use_av = fields.Boolean(related="category_id.use_av")
     hr_advance_count = fields.Integer(compute="_compute_hr_advance_count")
+    expense_sheet_ids = fields.One2many(
+        domain=[("advance", "=", False)],
+    )
+    advance_sheet_ids = fields.One2many(
+        string="Advance Sheets",
+        comodel_name="hr.expense.sheet",
+        inverse_name="ref_request_id",
+        domain=[("advance", "=", True)],
+        copy=False,
+    )
 
-    @api.depends("resource_ref")
     def _compute_hr_advance_count(self):
         for request in self:
-            ref = request.resource_ref
-            request.hr_advance_count = (
-                1
-                if (ref and ref._name == "hr.expense.sheet" and ref.advance)
-                else 0
-            )
+            request.hr_advance_count = len(request.advance_sheet_ids)
 
-    def action_create_hr_advance(self):
+    def action_view_advance(self):
         self.ensure_one()
-        Expense = self.env["hr.expense"]
-        values = self._prepare_advance_vals()
-        if not values.get("unit_amount"):  # No amount, no create advance
-            return
-        advance = Expense.create(values)
-        advance.action_submit_expenses()
-        self.resource_ref = "{},{}".format(
-            advance.sheet_id._name,
-            advance.sheet_id.id,
-        )
-
-    def _prepare_advance_vals(self):
-        self.ensure_one()
-        values = {
-            "advance": True,
-        }
-        Expense = self.env["hr.expense"]
-        specs = Expense._onchange_spec()
-        updates = Expense.onchange(values, ["advance"], specs)
-        value = updates.get("value", {})
-        for name, val in value.items():
-            if isinstance(val, tuple):
-                value[name] = val[0]
-        values.update(value)
-        values.update(
-            {
-                "unit_amount": self.amount,
-                "quantity": 1,
-            }
-        )
-        return values
-
-    def action_open_hr_advance(self):
-        self.ensure_one()
-        sheet = (
-            self.resource_ref
-            if (
-                self.resource_ref
-                and self.resource_ref._name == "hr.expense.sheet"
-                and self.resource_ref.advance
-            )
-            else self.env["hr.expense.sheet"].browse()
-        )
-        domain = [("id", "=", sheet.id)]
         action = {
-            "name": _("Advance"),
-            "view_type": "tree",
+            "name": _("Advance Sheet"),
             "view_mode": "list,form",
             "res_model": "hr.expense.sheet",
             "type": "ir.actions.act_window",
-            "context": self.env.context,
-            "domain": domain,
+            "context": {"create": False, "edit": False},
+            "domain": [("id", "in", self.advance_sheet_ids.ids)],
+        }
+        return action
+
+    def action_create_advance(self):
+        self.ensure_one()
+        ctx = self.env.context.copy()
+        advance = self.env.ref(
+            "hr_expense_advance_clearing.product_emp_advance"
+        )
+        ctx.update(
+            {
+                "default_ref_request_id": self.id,
+                # Additiona, for advance
+                "default_expense_line_ids": [
+                    (
+                        0,
+                        0,
+                        {
+                            "advance": True,
+                            "product_id": advance.id,
+                        },
+                    )
+                ],
+                "request_advance_amount": self.amount,
+            }
+        )
+        action = {
+            "name": _("Advance Sheet"),
+            "view_mode": "form",
+            "res_model": "hr.expense.sheet",
+            "type": "ir.actions.act_window",
+            "context": ctx,
         }
         return action
