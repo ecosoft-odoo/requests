@@ -10,6 +10,11 @@ class PurchaseRquest(models.Model):
     _request_freeze_states = ["pending"]
     _doc_approved_states = ["approved"]
 
+    def _compute_child_amount(self):
+        for rec in self:
+            amount = sum(rec.purchase_request_ids.mapped("estimated_cost"))
+            rec.child_amount += amount
+
     def _prepare_defaults(self):
         res = super()._prepare_defaults()
         request = self.ref_request_id

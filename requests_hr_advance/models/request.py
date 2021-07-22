@@ -30,7 +30,7 @@ class RequestRequest(models.Model):
             "view_mode": "list,form",
             "res_model": "hr.expense.sheet",
             "type": "ir.actions.act_window",
-            "context": {"create": False, "edit": False},
+            "context": {"create": False, "delete": False, "edit": True},
             "domain": [("id", "in", self.advance_sheet_ids.ids)],
         }
         return action

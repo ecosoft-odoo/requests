@@ -10,6 +10,11 @@ class HRExpenseSheet(models.Model):
     _request_freeze_states = ["pending"]
     _doc_approved_states = ["approve"]
 
+    def _compute_child_amount(self):
+        for rec in self:
+            amount = sum(rec.expense_sheet_ids.mapped("total_amount"))
+            rec.child_amount += amount
+
     # Server Actions
     def approve_expense_sheets(self):
         res = super().approve_expense_sheets()

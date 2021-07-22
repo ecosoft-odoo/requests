@@ -19,6 +19,11 @@ class RequestRequest(models.Model):
         for request in self:
             request.hr_expense_count = len(request.expense_sheet_ids)
 
+    def _compute_child_amount(self):
+        for rec in self:
+            amount = sum(rec.expense_sheet_ids.mapped("total_amount"))
+            rec.child_amount += amount
+
     def action_view_expense(self):
         self.ensure_one()
         action = {
@@ -26,7 +31,7 @@ class RequestRequest(models.Model):
             "view_mode": "list,form",
             "res_model": "hr.expense.sheet",
             "type": "ir.actions.act_window",
-            "context": {"create": False, "edit": False},
+            "context": {"create": False, "delete": False, "edit": True},
             "domain": [("id", "in", self.expense_sheet_ids.ids)],
         }
         return action

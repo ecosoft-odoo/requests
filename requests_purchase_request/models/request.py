@@ -28,7 +28,7 @@ class RequestRequest(models.Model):
             "view_mode": "list,form",
             "res_model": "purchase.request",
             "type": "ir.actions.act_window",
-            "context": {"create": False, "edit": False},
+            "context": {"create": False, "delete": False, "edit": True},
             "domain": [("id", "in", self.purchase_request_ids.ids)],
         }
         return action
