@@ -23,6 +23,11 @@ class RequestRequest(models.Model):
     )
     use_approver = fields.Boolean(related="category_id.use_approver")
     has_child = fields.Boolean(related="category_id.has_child")
+    child_amount = fields.Float(
+        string="Total Documents' Amount",
+        compute="_compute_child_amount",
+        help="Sum of all child document's amount (for extended module)",
+    )
     approver_id = fields.Many2one(
         comodel_name="res.users",
         string="Approver",
@@ -132,6 +137,10 @@ class RequestRequest(models.Model):
         }
         for request in self:
             request.attachment_number = attachment.get(request.id, 0)
+
+    def _compute_child_amount(self):
+        for rec in self:
+            rec.child_amount = 0.0
 
     @api.onchange("category_id")
     def _onchange_category_id_set_defaults(self):

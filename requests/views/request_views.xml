@@ -318,6 +318,16 @@
                             </group>
                         </page>
                     </notebook>
+                    <group class="oe_subtotal_footer oe_right">
+                        <div class="oe_subtotal_footer_separator oe_inline">
+                            <label for="child_amount" />
+                        </div>
+                            <field
+                            name="child_amount"
+                            nolabel="1"
+                            class="oe_subtotal_footer_separator"
+                        />
+                    </group>
                 </sheet>
                 <div class="o_attachment_preview" />
                 <div class="oe_chatter">
