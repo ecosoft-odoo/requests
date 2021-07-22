@@ -10,10 +10,10 @@ class RequestDocMixin(models.AbstractModel):
     _description = "Child doc of the request"
     _request_freeze_states = (
         []
-    )  # Document is freezed, if request is in these states
+    )  # Child Documents are freezed, if request is in these states
     _doc_approved_states = (
         []
-    )  # Document can move to this approved state, only by request
+    )  # Child Documents can move to this approved state, only when request is approved
 
     ref_request_id = fields.Many2one(
         comodel_name="request.request",
@@ -33,8 +33,9 @@ class RequestDocMixin(models.AbstractModel):
                     % rec.ref_request_id.display_name
                 )
             # Affect from _doc_states_by_request
-            if self._doc_approved_states and not self.env.context.get(
-                "request_action_approve"
+            if (
+                self._doc_approved_states
+                and rec.ref_request_id.state != "approved"
             ):
                 if vals.get("state") in self._doc_approved_states:
                     raise ValidationError(
@@ -47,8 +48,9 @@ class RequestDocMixin(models.AbstractModel):
 
     @api.onchange("ref_request_id")
     def _onchange_ref_rqeuest_set_defaults(self):
-        vals = self._prepare_defaults()
-        self.update(vals)
+        if self.ref_request_id:
+            vals = self._prepare_defaults()
+            self.update(vals)
 
     def _prepare_defaults(self):
         """ Hook method to prepare default for creating doc """
@@ -77,8 +79,9 @@ class RequestDocLineMixin(models.AbstractModel):
 
     @api.onchange("ref_request_id")
     def _onchange_ref_rqeuest_set_defaults(self):
-        vals = self._prepare_defaults()
-        self.update(vals)
+        if self.ref_request_id:
+            vals = self._prepare_defaults()
+            self.update(vals)
 
     def _prepare_defaults(self):
         """ Hook method to prepare default for creating doc line """

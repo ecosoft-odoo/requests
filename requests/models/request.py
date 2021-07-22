@@ -52,7 +52,7 @@ class RequestRequest(models.Model):
     )
     reference = fields.Char(string="Reference")
     amount = fields.Float(string="Amount")
-    reason = fields.Text(string="Description")
+    reason = fields.Html(string="Description")
     state = fields.Selection(
         [
             ("draft", "To Submit"),
@@ -138,9 +138,14 @@ class RequestRequest(models.Model):
         for request in self:
             request.attachment_number = attachment.get(request.id, 0)
 
+    def _get_child_amount(self):
+        """ Hook """
+        self.ensure_one()
+        return 0.0
+
     def _compute_child_amount(self):
         for rec in self:
-            rec.child_amount = 0.0
+            rec.child_amount = rec._get_child_amount()
 
     @api.onchange("category_id")
     def _onchange_category_id_set_defaults(self):
@@ -185,7 +190,6 @@ class RequestRequest(models.Model):
             rec.category_id.approved_action_id.with_context(
                 active_model=rec._name,
                 active_id=rec.id,
-                request_action_approve=True,
             ).sudo().run()
 
     def action_refuse(self, approver=None):

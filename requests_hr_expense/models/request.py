@@ -15,14 +15,13 @@ class RequestRequest(models.Model):
         copy=False,
     )
 
+    def _get_child_amount(self):
+        amount = sum(self.expense_sheet_ids.mapped("total_amount"))
+        return super()._get_child_amount() + amount
+
     def _compute_hr_expense_count(self):
         for request in self:
             request.hr_expense_count = len(request.expense_sheet_ids)
-
-    def _compute_child_amount(self):
-        for rec in self:
-            amount = sum(rec.expense_sheet_ids.mapped("total_amount"))
-            rec.child_amount += amount
 
     def action_view_expense(self):
         self.ensure_one()

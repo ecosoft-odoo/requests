@@ -17,6 +17,10 @@ class RequestRequest(models.Model):
         copy=False,
     )
 
+    def _get_child_amount(self):
+        amount = sum(self.purchase_request_ids.mapped("estimated_cost"))
+        return super()._get_child_amount() + amount
+
     def _compute_purchase_request_count(self):
         for request in self:
             request.purchase_request_count = len(request.purchase_request_ids)

@@ -5,7 +5,8 @@
         <field name="model_id" ref="requests.model_request_request" />
         <field name="state">code</field>
         <field name="code">
-record.advance_sheet_ids.filtered(lambda l: l.state=="submit").approve_expense_sheets()
+advance_sheets = record.advance_sheet_ids.filtered(lambda l: l.state=="submit")
+advance_sheets.with_context(bypass_check_user_has_groups=True).approve_expense_sheets()
         </field>
     </record>
 </odoo>

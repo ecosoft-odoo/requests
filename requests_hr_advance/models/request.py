@@ -19,6 +19,10 @@ class RequestRequest(models.Model):
         copy=False,
     )
 
+    def _get_child_amount(self):
+        amount = sum(self.advance_sheet_ids.mapped("total_amount"))
+        return super()._get_child_amount() + amount
+
     def _compute_hr_advance_count(self):
         for request in self:
             request.hr_advance_count = len(request.advance_sheet_ids)
