@@ -5,17 +5,13 @@
         <field name="inherit_id" ref="requests.request_request_view_form" />
         <field name="arch" type="xml">
             <notebook position="inside">
-                <page
-                    name="custom_info"
-                    string="Custom Information"
-                    attrs="{'invisible': [('custom_info_template_id', '=', False)]}"
-                >
+                <page name="custom_info" string="Custom Information">
+                    <field
+                        name="custom_info_template_id"
+                        options='{"no_quick_create": True}'
+                        placeholder="Choose Template"
+                    />
                     <group>
-                        <field
-                            name="custom_info_template_id"
-                            options='{"no_quick_create": True}'
-                            invisible="1"
-                        />
                         <field
                             name="custom_info_ids"
                             colspan="4"

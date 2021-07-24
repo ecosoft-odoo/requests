@@ -5,7 +5,7 @@
         <field name="inherit_id" ref="requests.request_category_view_form" />
         <field name="arch" type="xml">
             <page name="options" position="after">
-                <page string="Create EX Option" name="ex_option">
+                <page string="Create AV Option" name="ex_option">
                     <group>
                         <field name="use_av" />
                         <field name="av_approved_action_id" />

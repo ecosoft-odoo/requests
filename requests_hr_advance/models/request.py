@@ -39,26 +39,32 @@ class RequestRequest(models.Model):
         }
         return action
 
-    def action_create_advance(self):
-        self.ensure_one()
-        ctx = self.env.context.copy()
+    def _prepare_advance_line(self):
         advance = self.env.ref(
             "hr_expense_advance_clearing.product_emp_advance"
         )
+        return {
+            "advance": True,
+            "product_id": advance.id,
+            "employee_id": self.requested_by.employee_id.id,
+            "payment_mode": "own_account",
+        }
+
+    def action_create_advance(self):
+        self.ensure_one()
+        ctx = self.env.context.copy()
         ctx.update(
             {
                 "default_ref_request_id": self.id,
-                # Additiona, for advance
+                # Additional line, for advance
                 "default_expense_line_ids": [
                     (
                         0,
                         0,
-                        {
-                            "advance": True,
-                            "product_id": advance.id,
-                        },
+                        self._prepare_advance_line(),
                     )
                 ],
+                # need to pass via context, as unit_amount is computed field
                 "request_advance_amount": self.amount,
             }
         )

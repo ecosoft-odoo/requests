@@ -44,6 +44,7 @@ class HRExpense(models.Model):
     @api.depends("product_id", "company_id")
     def _compute_from_product_id_company_id(self):
         super()._compute_from_product_id_company_id()
+        # Neet to get from context, because it is amount is a computed field
         if self.env.context.get("request_advance_amount"):
             advance = self.filtered("advance")
             advance.update(
