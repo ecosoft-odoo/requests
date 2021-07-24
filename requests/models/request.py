@@ -52,7 +52,8 @@ class RequestRequest(models.Model):
     )
     reference = fields.Char(string="Reference")
     amount = fields.Float(string="Amount")
-    reason = fields.Html(string="Description")
+    reason = fields.Text(string="Reasons")
+    remark = fields.Html(string="Remarks")
     state = fields.Selection(
         [
             ("draft", "To Submit"),
@@ -180,6 +181,12 @@ class RequestRequest(models.Model):
         self.write(
             {"date_confirmed": fields.Datetime.now(), "state": "pending"}
         )
+        # Server Action
+        for rec in self:
+            rec.category_id.pending_action_id.with_context(
+                active_model=rec._name,
+                active_id=rec.id,
+            ).sudo().run()
 
     def action_approve(self, approver=None):
         if self.approver_id and self.approver_id != self.env.user:

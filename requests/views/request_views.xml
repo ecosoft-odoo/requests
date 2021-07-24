@@ -303,8 +303,14 @@
                             />
                         </page>
                         <page string="Description" name="description">
+                            <separator string="Reasons" />
                             <field
                                 name="reason"
+                                attrs="{'readonly':[('state','!=','draft')]}"
+                            />
+                            <separator string="Remarks" />
+                            <field
+                                name="remark"
                                 attrs="{'readonly':[('state','!=','draft')]}"
                             />
                         </page>

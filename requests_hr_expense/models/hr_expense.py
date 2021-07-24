@@ -28,6 +28,7 @@ class HRExpenseSheet(models.Model):
                 "employee_id": request.requested_by.employee_id.id,
                 "user_id": request.approver_id.id,
                 "expense_line_ids": lines,
+                "name": request.reason,
             }
         )
         return res

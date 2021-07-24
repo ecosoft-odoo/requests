@@ -19,6 +19,7 @@ class RequestDocMixin(models.AbstractModel):
         comodel_name="request.request",
         index=True,
         ondelete="restrict",
+        copy=False,
     )
 
     def write(self, vals):
@@ -75,6 +76,7 @@ class RequestDocLineMixin(models.AbstractModel):
 
     ref_request_id = fields.Many2one(
         comodel_name="request.request",
+        copy=False,
     )
 
     @api.onchange("ref_request_id")
