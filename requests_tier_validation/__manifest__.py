@@ -11,7 +11,9 @@
     "license": "AGPL-3",
     "depends": ["requests", "base_tier_validation"],
     "data": [
+        "security/request_security.xml",
         "views/request_views.xml",
+        "views/request_category_views.xml",
     ],
     "application": False,
     "installable": True,
