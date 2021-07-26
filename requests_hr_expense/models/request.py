@@ -19,6 +19,15 @@ class RequestRequest(models.Model):
         amount = sum(self.expense_sheet_ids.mapped("total_amount"))
         return super()._get_child_amount() + amount
 
+    def _ready_to_submit(self):
+        if not super()._ready_to_submit():
+            return False
+        if not self.expense_sheet_ids:
+            return True
+        # Ready if all expense sheets are in submitted state
+        states = list(set(self.expense_sheet_ids.mapped("state")))
+        return len(states) == 1 and states[0] == "submit"
+
     def _compute_hr_expense_count(self):
         for request in self:
             request.hr_expense_count = len(request.expense_sheet_ids)

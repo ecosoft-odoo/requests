@@ -23,6 +23,15 @@ class RequestRequest(models.Model):
         amount = sum(self.advance_sheet_ids.mapped("total_amount"))
         return super()._get_child_amount() + amount
 
+    def _ready_to_submit(self):
+        if not super()._ready_to_submit():
+            return False
+        if not self.advance_sheet_ids:
+            return True
+        # Ready if all advance sheets are in submitted state
+        states = list(set(self.advance_sheet_ids.mapped("state")))
+        return len(states) == 1 and states[0] == "submit"
+
     def _compute_hr_advance_count(self):
         for request in self:
             request.hr_advance_count = len(request.advance_sheet_ids)

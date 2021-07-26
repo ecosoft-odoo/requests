@@ -101,11 +101,12 @@
                 <header>
                     <field name="use_approver" invisible="1" />
                     <field name="has_access_to_request" invisible="1" />
+                    <field name="ready_to_submit" invisible="1" />
                     <button
                         name="action_confirm"
                         string="Submit"
                         type="object"
-                        attrs="{'invisible':[('state','!=','draft')]}"
+                        attrs="{'invisible':[('ready_to_submit','=',False)]}"
                         class="btn-primary"
                     />
                     <button

@@ -21,6 +21,15 @@ class RequestRequest(models.Model):
         amount = sum(self.purchase_request_ids.mapped("estimated_cost"))
         return super()._get_child_amount() + amount
 
+    def _ready_to_submit(self):
+        if not super()._ready_to_submit():
+            return False
+        if not self.purchase_request_ids:
+            return True
+        # Ready if all PR are in To Approve state
+        states = list(set(self.purchase_request_ids.mapped("state")))
+        return len(states) == 1 and states[0] == "to_approve"
+
     def _compute_purchase_request_count(self):
         for request in self:
             request.purchase_request_count = len(request.purchase_request_ids)

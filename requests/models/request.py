@@ -28,6 +28,12 @@ class RequestRequest(models.Model):
         compute="_compute_child_amount",
         help="Sum of all child document's amount (for extended module)",
     )
+    ready_to_submit = fields.Boolean(
+        string="Ready to Submit",
+        compute="_compute_ready_to_submit",
+        search="_search_ready_to_submit",
+        help="Request ready for submission (for extened module)",
+    )
     approver_id = fields.Many2one(
         comodel_name="res.users",
         string="Approver",
@@ -147,6 +153,26 @@ class RequestRequest(models.Model):
     def _compute_child_amount(self):
         for rec in self:
             rec.child_amount = rec._get_child_amount()
+
+    def _ready_to_submit(self):
+        """ Hook """
+        self.ensure_one()
+        return self.state == "draft"
+
+    def _compute_ready_to_submit(self):
+        for rec in self:
+            rec.ready_to_submit = rec._ready_to_submit()
+
+    @api.model
+    def _search_ready_to_submit(self, operator, value):
+        if operator != "=":
+            raise ValueError(_("Only support '=' operator"))
+        requests = self.search([("state", "=", "draft")])
+        ready_requests = requests.filtered("ready_to_submit")
+        if value:
+            return [("id", "in", ready_requests.ids)]
+        else:
+            return [("id", "in", (requests - ready_requests).ids)]
 
     @api.onchange("category_id")
     def _onchange_category_id_set_defaults(self):
