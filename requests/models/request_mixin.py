@@ -69,6 +69,13 @@ class RequestDocMixin(models.AbstractModel):
         }
         return action
 
+    @api.constrains("state")
+    def _trigger_ready_to_submit(self):
+        for request in self.filtered("ref_request_id").mapped(
+            "ref_request_id"
+        ):
+            request.ready_to_submit = request._ready_to_submit()
+
 
 class RequestDocLineMixin(models.AbstractModel):
     _name = "request.doc.line.mixin"

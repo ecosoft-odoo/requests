@@ -30,8 +30,9 @@ class RequestRequest(models.Model):
     )
     ready_to_submit = fields.Boolean(
         string="Ready to Submit",
-        compute="_compute_ready_to_submit",
-        search="_search_ready_to_submit",
+        readonly=True,
+        index=True,
+        copy=False,
         help="Request ready for submission (for extened module)",
     )
     approver_id = fields.Many2one(
@@ -159,20 +160,10 @@ class RequestRequest(models.Model):
         self.ensure_one()
         return self.state == "draft"
 
-    def _compute_ready_to_submit(self):
+    @api.constrains("state")
+    def _trigger_ready_to_submit(self):
         for rec in self:
             rec.ready_to_submit = rec._ready_to_submit()
-
-    @api.model
-    def _search_ready_to_submit(self, operator, value):
-        if operator != "=":
-            raise ValueError(_("Only support '=' operator"))
-        requests = self.search([("state", "=", "draft")])
-        ready_requests = requests.filtered("ready_to_submit")
-        if value:
-            return [("id", "in", ready_requests.ids)]
-        else:
-            return [("id", "in", (requests - ready_requests).ids)]
 
     @api.onchange("category_id")
     def _onchange_category_id_set_defaults(self):
