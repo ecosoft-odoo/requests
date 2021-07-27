@@ -10,6 +10,10 @@
             name="approved_action_id"
             ref="action_request_purchase_request_approved_actions"
         />
+        <field
+            name="refused_action_id"
+            ref="action_request_purchase_request_refused_actions"
+        />
         <field name="sequence">100</field>
         <field name="use_pr" eval="True" />
         <field name="automated_sequence" eval="True" />

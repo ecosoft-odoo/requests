@@ -9,4 +9,5 @@ class RequestRequest(models.Model):
     _state_from = ["pending"]
     _state_to = ["approved"]
 
+    _cancel_state = "refused"
     _tier_validation_manual_config = False
