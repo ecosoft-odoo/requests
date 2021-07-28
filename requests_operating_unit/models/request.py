@@ -14,6 +14,14 @@ class RequestRequest(models.Model):
             "res.users"
         ].operating_unit_default_get(),
     )
+    child_request_ids = fields.Many2many(
+        domain="[('state', '=', 'approved'),"
+        "('operating_unit_id', '=', operating_unit_id)]",
+    )
+
+    @api.onchange("operating_unit_id")
+    def _onchange_operating_unit_id(self):
+        self.child_request_ids = False
 
     @api.constrains("operating_unit_id", "company_id")
     def _check_company_operating_unit(self):

@@ -27,7 +27,7 @@ class PurchaseRquest(models.Model):
                 "origin": request.name,
                 "requested_by": request.requested_by.id,
                 "assigned_to": request.approver_id.id,
-                "date_start": request.date,
+                "date_start": request.date or fields.Date.context_today(self),
                 "description": request.reason,
                 "line_ids": lines,
             }

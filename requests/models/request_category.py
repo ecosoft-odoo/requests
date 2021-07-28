@@ -79,7 +79,13 @@ class RequestCategory(models.Model):
     )
     has_document = fields.Selection(
         CATEGORY_SELECTION,
-        string="Documents",
+        string="Has Documents",
+        default="no",
+        required=True,
+    )
+    has_child_requests = fields.Selection(
+        CATEGORY_SELECTION,
+        string="Has Child Requests",
         default="no",
         required=True,
     )
@@ -156,8 +162,8 @@ use env for self.env, i.e.,
         """
     )
     help = fields.Html(help="Explaination for a complex request operation.")
-    has_child = fields.Boolean(
-        compute="_compute_has_child",
+    has_child_docs = fields.Boolean(
+        compute="_compute_has_child_docs",
         help="Checked, if the module was extened to have child documents",
     )
 
@@ -181,11 +187,11 @@ use env for self.env, i.e.,
                 category.id, 0
             )
 
-    def _compute_has_child(self):
+    def _compute_has_child_docs(self):
         for rec in self:
-            rec.has_child = rec._has_child()
+            rec.has_child_docs = rec._has_child_docs()
 
-    def _has_child(self):
+    def _has_child_docs(self):
         self.ensure_one()
         return False
 

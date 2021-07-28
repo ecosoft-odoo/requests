@@ -183,6 +183,11 @@
                                         widget="radio"
                                         options="{'horizontal': true}"
                                     />
+                                    <field
+                                        name="has_child_requests"
+                                        widget="radio"
+                                        options="{'horizontal': true}"
+                                    />
                                 </group>
                                 <group
                                     string="Approvers"

@@ -49,7 +49,11 @@ class RequestRequest(models.Model):
     def action_create_purchase_request(self):
         self.ensure_one()
         ctx = self.env.context.copy()
-        ctx.update({"default_ref_request_id": self.id})
+        ctx.update(
+            {
+                "default_ref_request_id": self.id,
+            }
+        )
         action = {
             "name": _("Purchase Request"),
             "view_mode": "form",

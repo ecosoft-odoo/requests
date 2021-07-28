@@ -36,7 +36,7 @@
                     />
                 </button>
             </xpath>
-            <field name="has_child" position="after">
+            <field name="has_child_docs" position="after">
                 <group
                     name="purchase_request"
                     string="Purchase Requests"

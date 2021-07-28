@@ -270,6 +270,12 @@
                                 name="partner_id"
                                 attrs="{'invisible':[('has_partner','==','no')], 'required': [('has_partner','==','required')], 'readonly': [('state','!=','draft')]}"
                             />
+                            <field name="has_child_requests" invisible="1" />
+                            <field
+                                name="child_request_ids"
+                                attrs="{'invisible':[('has_child_requests','==','no')], 'required': [('has_child_requests','==','required')], 'readonly': [('state','!=','draft')]}"
+                                widget="many2many_tags"
+                            />
                         </group>
                         <group name="request_details">
                             <field
@@ -318,10 +324,10 @@
                         <page
                             string="Child Documents"
                             name="children"
-                            attrs="{'invisible': [('has_child', '=', False)]}"
+                            attrs="{'invisible': [('has_child_docs', '=', False)]}"
                         >
                             <group name="children" colspan="4">
-                                <field name="has_child" invisible="1" />
+                                <field name="has_child_docs" invisible="1" />
                             </group>
                         </page>
                     </notebook>

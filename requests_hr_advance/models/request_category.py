@@ -31,5 +31,5 @@ class RequestCategory(models.Model):
         help="This server action is trigger after AV is rejected",
     )
 
-    def _has_child(self):
-        return super()._has_child() or self.use_av
+    def _has_child_docs(self):
+        return super()._has_child_docs() or self.use_av

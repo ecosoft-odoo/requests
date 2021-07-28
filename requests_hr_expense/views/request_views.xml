@@ -32,7 +32,7 @@
                     <field name="hr_expense_count" string="EX" widget="statinfo" />
                 </button>
             </xpath>
-            <field name="has_child" position="after">
+            <field name="has_child_docs" position="after">
                 <group
                     name="hr_expense"
                     string="Expense Sheets"

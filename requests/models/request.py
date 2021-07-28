@@ -22,7 +22,7 @@ class RequestRequest(models.Model):
         "request.category", string="Category", required=True
     )
     use_approver = fields.Boolean(related="category_id.use_approver")
-    has_child = fields.Boolean(related="category_id.has_child")
+    has_child_docs = fields.Boolean(related="category_id.has_child_docs")
     child_amount = fields.Float(
         string="Total Documents' Amount",
         compute="_compute_child_amount",
@@ -103,7 +103,17 @@ class RequestRequest(models.Model):
     has_location = fields.Selection(related="category_id.has_location")
     has_product = fields.Selection(related="category_id.has_product")
     has_document = fields.Selection(related="category_id.has_document")
-    # request_minimum = fields.Integer(related="category_id.request_minimum")
+    has_child_requests = fields.Selection(
+        related="category_id.has_child_requests"
+    )
+    child_request_ids = fields.Many2many(
+        comodel_name="request.request",
+        string="Child Requests",
+        relation="requests_child_requests_rel",
+        column1="request1_id",
+        column2="request2_id",
+        domain=[("state", "=", "approved")],
+    )
     approved_action_id = fields.Many2one(
         related="category_id.approved_action_id"
     )
@@ -149,7 +159,8 @@ class RequestRequest(models.Model):
     def _get_child_amount(self):
         """ Hook """
         self.ensure_one()
-        return 0.0
+        amount = sum(self.child_request_ids.mapped("child_amount"))
+        return amount
 
     def _compute_child_amount(self):
         for rec in self:
