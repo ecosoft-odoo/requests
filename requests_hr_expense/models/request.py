@@ -24,9 +24,11 @@ class RequestRequest(models.Model):
             return False
         if not self.expense_sheet_ids:
             return True
-        # Ready if all expense sheets are in submitted state
-        states = list(set(self.expense_sheet_ids.mapped("state")))
-        return len(states) == 1 and states[0] == "submit"
+        if self.expense_sheet_ids.filtered_domain(
+            [("state", "not in", ["cancel", "submit"])]
+        ):
+            return False
+        return True
 
     def _compute_hr_expense_count(self):
         for request in self:
@@ -42,6 +44,10 @@ class RequestRequest(models.Model):
             "context": {"create": False, "delete": False, "edit": True},
             "domain": [("id", "in", self.expense_sheet_ids.ids)],
         }
+        if len(self.expense_sheet_ids) == 1:
+            action.update(
+                {"view_mode": "form", "res_id": self.expense_sheet_ids[:1].id}
+            )
         return action
 
     def action_create_expense(self):

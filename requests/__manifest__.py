@@ -12,14 +12,14 @@
     "data": [
         "security/request_security.xml",
         "security/ir.model.access.csv",
-        "data/request_category_data.xml",
+        "data/mail_data.xml",
         "views/request_category_views.xml",
         "views/request_product_line_views.xml",
         "views/request_views.xml",
         "views/res_users_views.xml",
     ],
     "demo": [
-        # "data/request_demo.xml",
+        "demo/request_category_data.xml",
     ],
     "application": True,
     "installable": True,

@@ -74,7 +74,9 @@ class RequestDocMixin(models.AbstractModel):
         for request in self.filtered("ref_request_id").mapped(
             "ref_request_id"
         ):
-            request.ready_to_submit = request._ready_to_submit()
+            # Update only when changed, to minimize trigger to request
+            if request.ready_to_submit != request._ready_to_submit():
+                request.ready_to_submit = request._ready_to_submit()
 
 
 class RequestDocLineMixin(models.AbstractModel):

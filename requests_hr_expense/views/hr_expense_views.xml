@@ -4,6 +4,9 @@
         <field name="model">hr.expense.sheet</field>
         <field name="inherit_id" ref="hr_expense.view_hr_expense_sheet_form" />
         <field name="arch" type="xml">
+            <header position="attributes">
+                <attribute name="invisible">context.get('no_header')</attribute>
+            </header>
             <xpath expr="/form/sheet/group/group" position="inside">
                 <field name="ref_request_id" invisible="1" />
             </xpath>

@@ -11,3 +11,6 @@ class RequestRequest(models.Model):
 
     _cancel_state = "refused"
     _tier_validation_manual_config = False
+
+    def _mail_act_request_approval(self):
+        """ By pass request approval, use tier valiation notify instead """

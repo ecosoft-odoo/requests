@@ -14,9 +14,11 @@
     "depends": ["requests_hr_expense", "hr_expense_advance_clearing"],
     "data": [
         "data/server_actions.xml",
-        "data/request_category_data.xml",
         "views/request_views.xml",
         "views/request_category_views.xml",
+    ],
+    "demo": [
+        "demo/request_category_data.xml",
     ],
     "application": False,
     "installable": True,

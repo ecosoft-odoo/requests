@@ -14,10 +14,12 @@
     "depends": ["requests", "purchase_request"],
     "data": [
         "data/server_actions.xml",
-        "data/request_category_data.xml",
         "views/request_views.xml",
         "views/request_category_views.xml",
         "views/purchase_request_views.xml",
+    ],
+    "demo": [
+        "demo/request_category_data.xml",
     ],
     "application": False,
     "installable": True,

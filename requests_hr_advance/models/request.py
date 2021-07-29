@@ -28,25 +28,15 @@ class RequestRequest(models.Model):
             return False
         if not self.advance_sheet_ids:
             return True
-        # Ready if all advance sheets are in submitted state
-        states = list(set(self.advance_sheet_ids.mapped("state")))
-        return len(states) == 1 and states[0] == "submit"
+        if self.advance_sheet_ids.filtered_domain(
+            [("state", "not in", ["cancel", "submit"])]
+        ):
+            return False
+        return True
 
     def _compute_hr_advance_count(self):
         for request in self:
             request.hr_advance_count = len(request.advance_sheet_ids)
-
-    def action_view_advance(self):
-        self.ensure_one()
-        action = {
-            "name": _("Advance Sheet"),
-            "view_mode": "list,form",
-            "res_model": "hr.expense.sheet",
-            "type": "ir.actions.act_window",
-            "context": {"create": False, "delete": False, "edit": True},
-            "domain": [("id", "in", self.advance_sheet_ids.ids)],
-        }
-        return action
 
     def _prepare_advance_line(self):
         advance = self.env.ref(
@@ -58,6 +48,22 @@ class RequestRequest(models.Model):
             "employee_id": self.requested_by.employee_id.id,
             "payment_mode": "own_account",
         }
+
+    def action_view_advance(self):
+        self.ensure_one()
+        action = {
+            "name": _("Advance Sheet"),
+            "view_mode": "list,form",
+            "res_model": "hr.expense.sheet",
+            "type": "ir.actions.act_window",
+            "context": {"create": False, "delete": False, "edit": True},
+            "domain": [("id", "in", self.advance_sheet_ids.ids)],
+        }
+        if len(self.advance_sheet_ids) == 1:
+            action.update(
+                {"view_mode": "form", "res_id": self.advance_sheet_ids[:1].id}
+            )
+        return action
 
     def action_create_advance(self):
         self.ensure_one()
@@ -73,7 +79,7 @@ class RequestRequest(models.Model):
                         self._prepare_advance_line(),
                     )
                 ],
-                # need to pass via context, as unit_amount is computed field
+                # need context, as unit_amount is computed in hr.expense
                 "request_advance_amount": self.amount,
             }
         )

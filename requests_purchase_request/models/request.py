@@ -26,9 +26,11 @@ class RequestRequest(models.Model):
             return False
         if not self.purchase_request_ids:
             return True
-        # Ready if all PR are in To Approve state
-        states = list(set(self.purchase_request_ids.mapped("state")))
-        return len(states) == 1 and states[0] == "to_approve"
+        if self.purchase_request_ids.filtered_domain(
+            [("state", "not in", ["rejected", "to_approve"])]
+        ):
+            return False
+        return True
 
     def _compute_purchase_request_count(self):
         for request in self:
@@ -44,6 +46,13 @@ class RequestRequest(models.Model):
             "context": {"create": False, "delete": False, "edit": True},
             "domain": [("id", "in", self.purchase_request_ids.ids)],
         }
+        if len(self.purchase_request_ids) == 1:
+            action.update(
+                {
+                    "view_mode": "form",
+                    "res_id": self.purchase_request_ids[:1].id,
+                }
+            )
         return action
 
     def action_create_purchase_request(self):

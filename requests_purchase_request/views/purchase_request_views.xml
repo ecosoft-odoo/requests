@@ -4,6 +4,9 @@
         <field name="model">purchase.request</field>
         <field name="inherit_id" ref="purchase_request.view_purchase_request_form" />
         <field name="arch" type="xml">
+            <header position="attributes">
+                <attribute name="invisible">context.get('no_header')</attribute>
+            </header>
             <xpath expr="/form/sheet/group/group" position="inside">
                 <field name="ref_request_id" invisible="1" />
             </xpath>

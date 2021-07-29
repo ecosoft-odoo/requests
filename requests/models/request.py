@@ -19,7 +19,10 @@ class RequestRequest(models.Model):
 
     name = fields.Char(string="Request Subject", tracking=True)
     category_id = fields.Many2one(
-        "request.category", string="Category", required=True
+        "request.category",
+        string="Category",
+        required=True,
+        index=True,
     )
     use_approver = fields.Boolean(related="category_id.use_approver")
     has_child_docs = fields.Boolean(related="category_id.has_child_docs")
@@ -171,10 +174,43 @@ class RequestRequest(models.Model):
         self.ensure_one()
         return self.state == "draft"
 
+    def _mail_act_request_approval(self):
+        for request in self.filtered(lambda l: l.state == "pending"):
+            request.activity_schedule(
+                "requests.mail_act_request_approval",
+                user_id=request.approver_id.id or self.env.user.id,
+            )
+        self.filtered(lambda l: l.state == "approved").activity_feedback(
+            ["requests.mail_act_request_approval"]
+        )
+        self.filtered(
+            lambda l: l.state in ("draft", "cancel")
+        ).activity_unlink(["requests.mail_act_request_approval"])
+
+    def write(self, vals):
+        res = super().write(vals)
+        if vals.get("state"):
+            self._mail_act_request_approval()
+        return res
+
+    def _mail_act_ready_to_submit(self):
+        for request in self.filtered("ready_to_submit"):
+            request.activity_schedule(
+                "requests.mail_act_ready_to_submit",
+                user_id=request.requested_by.id,
+            )
+        self.filtered(lambda l: not l.ready_to_submit).activity_feedback(
+            ["requests.mail_act_ready_to_submit"]
+        )
+
     @api.constrains("state")
     def _trigger_ready_to_submit(self):
         for rec in self:
             rec.ready_to_submit = rec._ready_to_submit()
+
+    @api.constrains("ready_to_submit")
+    def _trigger_act_ready_to_submit(self):
+        self._mail_act_ready_to_submit()
 
     @api.onchange("category_id")
     def _onchange_category_id_set_defaults(self):
@@ -197,6 +233,30 @@ class RequestRequest(models.Model):
             "default_res_id": self.id,
         }
         return res
+
+    @api.onchange("category_id", "requested_by")
+    def _onchange_category_id(self):
+        if self.category_id.is_manager_approver:
+            employee = self.env["hr.employee"].search(
+                [("user_id", "=", self.requested_by.id)], limit=1
+            )
+            self.approver_id = employee.parent_id.user_id
+
+    # --------------------------------------------
+    # Mail Thread
+    # --------------------------------------------
+
+    def _track_subtype(self, init_values):
+        self.ensure_one()
+        if "state" in init_values and self.state == "approved":
+            return self.env.ref("requests.mt_request_approved")
+        elif "state" in init_values and self.state == "cancel":
+            return self.env.ref("requests.mt_request_refused")
+        return super()._track_subtype(init_values)
+
+    # --------------------------------------------
+    # Actions
+    # --------------------------------------------
 
     def action_confirm(self):
         self.ensure_one()
@@ -256,14 +316,6 @@ class RequestRequest(models.Model):
                 active_model=rec._name,
                 active_id=rec.id,
             ).sudo().run()
-
-    @api.onchange("category_id", "requested_by")
-    def _onchange_category_id(self):
-        if self.category_id.is_manager_approver:
-            employee = self.env["hr.employee"].search(
-                [("user_id", "=", self.requested_by.id)], limit=1
-            )
-            self.approver_id = employee.parent_id.user_id
 
     def execute_server_action(self):
         for rec in self:

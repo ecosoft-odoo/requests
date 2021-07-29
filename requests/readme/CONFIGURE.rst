@@ -1,4 +1,4 @@
-A set of Request Types already exists, i.e., Business trip, Borrow Items, etc.
+On demo mode, a set of Request Types already exists, i.e., Business trip, Borrow Items, etc.
 
 In addition, you want to change it, or add a new request type:
 

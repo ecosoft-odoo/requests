@@ -44,6 +44,7 @@
                         attrs="{'invisible': [('use_ex', '=', False)]}"
                         nolabel="1"
                         colspan="2"
+                        context="{'no_header': True}"
                     >
                         <tree editable="bottom">
                             <field name="name" string="Number" />
@@ -62,4 +63,16 @@
             </field>
         </field>
     </record>
+
+    <record id="request_request_view_search" model="ir.ui.view">
+        <field name="name">request.request.search</field>
+        <field name="model">request.request</field>
+        <field name="inherit_id" ref="requests.request_request_view_search" />
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="expense_sheet_ids" />
+            </field>
+        </field>
+    </record>
+
 </odoo>

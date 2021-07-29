@@ -71,6 +71,11 @@
                     name="filter_requests_to_review"
                     domain="[('approver_id', '=', uid), ('state', '=', 'pending')]"
                 />
+                <filter
+                    string="Ready to Submit"
+                    name="filter_ready_to_submit"
+                    domain="[('ready_to_submit', '=', True)]"
+                />
                 <group string="Group By">
                     <filter
                         name="group_by_category"
