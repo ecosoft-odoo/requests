@@ -1,0 +1,25 @@
+<odoo>
+
+    <!-- Server actions for Employee Advance -->
+    <record id="action_request_advance_approved_actions" model="ir.actions.server">
+        <field name="name">Request Type - Advance: Approve Advances</field>
+        <field name="model_id" ref="request_flow.model_request_request" />
+        <field name="state">code</field>
+        <field name="code">
+advance_sheets = record.advance_sheet_ids.filtered(lambda l: l.state=="submit")
+advance_sheets.with_context(bypass_check_user_has_groups=True).approve_expense_sheets()
+        </field>
+    </record>
+
+    <record id="action_request_advance_refused_actions" model="ir.actions.server">
+        <field name="name">Request Type - Advance: Refuse Advances</field>
+        <field name="model_id" ref="request_flow.model_request_request" />
+        <field name="state">code</field>
+        <field name="code">
+advance_sheets = record.advance_sheet_ids.filtered(lambda l: l.state=="submit")
+advance_sheets.mapped("expense_line_ids").refuse_expense("Refused by ref request")
+advance_sheets.refuse_sheet("Refused by ref request")
+        </field>
+    </record>
+
+</odoo>
